@@ -3,7 +3,7 @@
 #include <string.h>	// for strerror, strlen, index, strncmp, strncpy, strcmp, strcpy
 #include <stdlib.h>	// for strol, strtod, exit, abort
 #include <unistd.h>	// for close, read, getopt, opterr
-//#include <fcntl.h>	// for open, fcntl, O_RDWR, O_NOCTTY, O_NONBLOCK, F_SETFL
+#include <fcntl.h>	// for open, fcntl, O_RDWR, O_NOCTTY, O_NONBLOCK, F_SETFL
 //#include <sys/ioctl.h>	// for ioctl
 #include <errno.h>	// for errno
 //#include <termios.h>	// for struct termios, tcgetattr, cfmakeraw, cfsetspeed, tcsetattr, VMIN, VTIMES, CSB, tcdrain

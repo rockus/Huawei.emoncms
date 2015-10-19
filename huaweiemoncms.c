@@ -1,6 +1,6 @@
 #include "huaweiemoncms.h"
 
-struct huawei huawei;
+double T;
 
 void intHandler(int sig) {
     if (sig==SIGINT) {			// only quit on CTRL-C
@@ -26,6 +26,7 @@ int main(int argc, char **argv)
 
     config_t cfg;
     struct config config;
+    struct huawei huawei;
 
     if (argc==1)
     {
@@ -51,6 +52,16 @@ int main(int argc, char **argv)
 
     act.sa_handler = intHandler;
     sigaction(SIGINT, &act, NULL);	// catch Ctrl-C
+
+    // read temperature before anything else: avoids heating due to this code here (improbable, but still)
+    char Tbuf[32];
+    fileDescriptor = open ("/sys/class/thermal/thermal_zone0/temp", O_RDONLY);
+    if (!(fileDescriptor))
+        fprintf (stderr, "Could not open /sys/class/thermal/thermal_zone0/temp for read.\n");
+    read (fileDescriptor, Tbuf, sizeof(Tbuf)-1);
+    close (fileDescriptor);
+    T = strtof(Tbuf, NULL) / 1000.0;
+//    printf ("%6.3f\n", T);
 
     // read config file
     config_init(&cfg);
@@ -187,7 +198,12 @@ int sendToEmonCMS (struct config *config, struct huawei *huawei, int socket_fd)
     // generate json string for emonCMS
     sprintf (tcp_buffer, "GET /input/post.json?node=\"%s\"&json={mcc:%d,mnc:%d,totdown:%ld,totup:%ld}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, huawei->mcc, huawei->mnc, huawei->totDown, huawei->totUp, config->pApiKey, config->pHostName, TOOLNAME, VERSION);
     printf ("-----\nbuflen: %ld\n%s\n", strlen(tcp_buffer), tcp_buffer);
-    printf ("send: %ld\n", send(socket_fd, tcp_buffer, strlen(tcp_buffer), 0));
+    printf ("sent: %ld\n", send(socket_fd, tcp_buffer, strlen(tcp_buffer), 0));
+
+    // generate json string for emonCMS
+    sprintf (tcp_buffer, "GET /input/post.json?node=\"Raspi\"&json={Tcore:%6.3f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", T, config->pApiKey, config->pHostName, TOOLNAME, VERSION);
+    printf ("-----\nbuflen: %ld\n%s\n", strlen(tcp_buffer), tcp_buffer);
+    printf ("sent: %ld\n", send(socket_fd, tcp_buffer, strlen(tcp_buffer), 0));
 
     return 1;	// 0 - fail; 1 - success
 }
