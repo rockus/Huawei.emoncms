@@ -196,7 +196,7 @@ int sendToEmonCMS (struct config *config, struct huawei *huawei, int socket_fd)
 //    printf ("socket_fd: %d\n", socket_fd);
 
     // generate json string for emonCMS
-    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s\"&json={mcc:%d,mnc:%d,totdown:%ld,totup:%ld}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, huawei->mcc, huawei->mnc, huawei->totDown, huawei->totUp, config->pApiKey, config->pHostName, TOOLNAME, VERSION);
+    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s\"&json={mcc:%d,mnc:%d,totdown:%ld,totup:%ld,monthdown:%ld,monthup:%ld,monthlimit:%ld}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, huawei->mcc, huawei->mnc, huawei->totDown, huawei->totUp, huawei->monthDown, huawei->monthUp, huawei->dataLimit, config->pApiKey, config->pHostName, TOOLNAME, VERSION);
     printf ("-----\nbuflen: %ld\n%s\n", strlen(tcp_buffer), tcp_buffer);
     printf ("sent: %ld\n", send(socket_fd, tcp_buffer, strlen(tcp_buffer), 0));
 
@@ -243,9 +243,45 @@ int readModemData(struct config *config, struct huawei *huawei, int socket_fd)
     }
 //    printf ("%s\n", request);
 //    printf ("%s\n", response);
-
     huawei->totDown = strtol(strstr(response, "<TotalDownload>")+15, NULL, 0);
     huawei->totUp = strtol(strstr(response, "<TotalUpload>")+13, NULL, 0);
+
+    sprintf (request, "GET /api/monitoring/month_statistics HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, VERSION);
+    if (send(socket_fd, request, strlen(request), 0) < strlen(request))
+    {
+	printf ("send error.\n");
+    }
+    sleep (2);	// to wait until all data available
+    rNum = recv(socket_fd, response, sizeof(response)-1, 0);
+//    printf("rNum: %d\n", rNum);
+    if (rNum == 0)
+    {
+	printf ("receive error.\n");
+    }
+//    printf ("%s\n", request);
+//    printf ("%s\n", response);
+
+    huawei->monthDown = strtol(strstr(response, "<CurrentMonthDownload>")+22, NULL, 0);
+    huawei->monthUp = strtol(strstr(response, "<CurrentMonthUpload>")+20, NULL, 0);
+
+    sprintf (request, "GET /api/monitoring/start_date HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, VERSION);
+    if (send(socket_fd, request, strlen(request), 0) < strlen(request))
+    {
+	printf ("send error.\n");
+    }
+    sleep (2);	// to wait until all data available
+    rNum = recv(socket_fd, response, sizeof(response)-1, 0);
+//    printf("rNum: %d\n", rNum);
+    if (rNum == 0)
+    {
+	printf ("receive error.\n");
+    }
+//    printf ("%s\n", request);
+    printf ("%s\n", response);
+
+    huawei->dataLimit = strtol(strstr(response, "<DataLimit>")+11, NULL, 0);
+
+    printf ("month down/up/limit: %ld/%ld/%ld\n", huawei->monthDown, huawei->monthUp, huawei->dataLimit);
 
     return 1;	// 0 - fail; 1 - success
 }

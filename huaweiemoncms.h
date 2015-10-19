@@ -42,6 +42,9 @@ struct huawei
 	int mnc;		// mobile network code
 	long totDown;		// total download
 	long totUp;		// total upload
+	long monthDown;		// total download
+	long monthUp;		// total upload
+	long dataLimit;		// data limit per month (as configured in web interface of GSM stick)
 };
 
 static int readmModemData (struct config *config, struct huawei *huawei, int socket_fd);
