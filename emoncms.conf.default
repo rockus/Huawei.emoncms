@@ -1,4 +1,5 @@
 # name of Node in EmonCMS Inputs
+# NO SPACES! Use underscores!
 node = "xxxxxxxxx";
 
 # IP address of GSM/UMTS modem
