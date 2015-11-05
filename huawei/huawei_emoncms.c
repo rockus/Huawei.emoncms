@@ -1,4 +1,5 @@
 #include "huawei_emoncms.h"
+#include "../emoncms.h"
 
 double T;
 
@@ -26,7 +27,7 @@ int main(int argc, char **argv)
 
     config_t cfg;
     struct config config;
-    struct huawei huawei;
+    struct data data;
 
     if (argc==1)
     {
@@ -135,7 +136,7 @@ printf ("modem: %s %s\n", he_modem->h_name, inet_ntoa(ipv4addr));
     if ((socket_fd_cms = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
     {
         fprintf(stderr, "Could not allocate socket, err %d.\n", errno);
-	config_destroy(&cfg);
+		config_destroy(&cfg);
         exit(1);
     }
     info_cms.sin_family = AF_INET;
@@ -145,15 +146,15 @@ printf ("modem: %s %s\n", he_modem->h_name, inet_ntoa(ipv4addr));
     {
         fprintf(stderr, "Could not connect to server, err%d.\n", errno);
         close(socket_fd_cms);
-	config_destroy(&cfg);
+		config_destroy(&cfg);
         exit(1);
     }
 
     if ((socket_fd_modem = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
     {
         fprintf(stderr, "Could not allocate socket, err %d.\n", errno);
-	config_destroy(&cfg);
-	close(socket_fd_cms);
+		config_destroy(&cfg);
+		close(socket_fd_cms);
         exit(1);
     }
     info_modem.sin_family = AF_INET;
@@ -164,14 +165,14 @@ printf ("modem: %s %s\n", he_modem->h_name, inet_ntoa(ipv4addr));
         fprintf(stderr, "Could not connect to server, err%d.\n", errno);
         close(socket_fd_modem);
         close(socket_fd_cms);
-	config_destroy(&cfg);
+		config_destroy(&cfg);
         exit(1);
     }
-    if (!(readModemData(&config, &huawei, socket_fd_modem))) {
+    if (!(readModemData(&config, &data, socket_fd_modem))) {
         printf("Could not read data.\n");
     }
 
-    if (!(sendToEmonCMS(&config, &huawei, socket_fd_cms))) {
+    if (!(sendToEmonCMS(&config, &data, socket_fd_cms))) {
         printf("Could not send data.\n");
     }
 
@@ -188,7 +189,7 @@ printf ("modem: %s %s\n", he_modem->h_name, inet_ntoa(ipv4addr));
 
 
 // send data to emonCMS
-int sendToEmonCMS (struct config *config, struct huawei *huawei, int socket_fd)
+int sendToEmonCMS (struct config *config, struct data *data, int socket_fd)
 {
     char tcp_buffer[1024];
     int num;
@@ -196,7 +197,7 @@ int sendToEmonCMS (struct config *config, struct huawei *huawei, int socket_fd)
 //    printf ("socket_fd: %d\n", socket_fd);
 
     // generate json string for emonCMS
-    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s\"&json={mcc:%d,mnc:%d,totdown:%ld,totup:%ld,monthdown:%ld,monthup:%ld,monthlimit:%ld}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, huawei->mcc, huawei->mnc, huawei->totDown, huawei->totUp, huawei->monthDown, huawei->monthUp, huawei->dataLimit, config->pApiKey, config->pHostName, TOOLNAME, VERSION);
+    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s\"&json={mcc:%d,mnc:%d,totdown:%ld,totup:%ld,monthdown:%ld,monthup:%ld,monthlimit:%ld}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, data->mcc, data->mnc, data->totDown, data->totUp, data->monthDown, data->monthUp, data->dataLimit, config->pApiKey, config->pHostName, TOOLNAME, VERSION);
     printf ("-----\nbuflen: %ld\n%s\n", strlen(tcp_buffer), tcp_buffer);
     printf ("sent: %ld\n", send(socket_fd, tcp_buffer, strlen(tcp_buffer), 0));
 
@@ -209,7 +210,7 @@ int sendToEmonCMS (struct config *config, struct huawei *huawei, int socket_fd)
 }
 
 // read data from Huawei GSM/UMTS modem
-int readModemData(struct config *config, struct huawei *huawei, int socket_fd)
+int readModemData(struct config *config, struct data *data, int socket_fd)
 {
     char request[255];
     char response[1024];
@@ -224,9 +225,9 @@ int readModemData(struct config *config, struct huawei *huawei, int socket_fd)
 	printf ("receive error.\n");
     }
 
-    huawei->mcc = strtol(strstr(response, "<Numeric>")+9, NULL, 0)/100;				// first 3 digits
-    huawei->mnc = strtol(strstr(response, "<Numeric>")+9, NULL, 0)-100*huawei->mcc;		// last 2 digits
-//    printf ("%d %d\n", huawei->mcc, huawei->mnc);
+    data->mcc = strtol(strstr(response, "<Numeric>")+9, NULL, 0)/100;				// first 3 digits
+    data->mnc = strtol(strstr(response, "<Numeric>")+9, NULL, 0)-100*data->mcc;		// last 2 digits
+//    printf ("%d %d\n", data->mcc, data->mnc);
 
     sprintf (request, "GET /api/monitoring/traffic-statistics HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, VERSION);
     if (send(socket_fd, request, strlen(request), 0) < strlen(request))
@@ -243,8 +244,8 @@ int readModemData(struct config *config, struct huawei *huawei, int socket_fd)
     }
 //    printf ("%s\n", request);
 //    printf ("%s\n", response);
-    huawei->totDown = strtol(strstr(response, "<TotalDownload>")+15, NULL, 0);
-    huawei->totUp = strtol(strstr(response, "<TotalUpload>")+13, NULL, 0);
+    data->totDown = strtol(strstr(response, "<TotalDownload>")+15, NULL, 0);
+    data->totUp = strtol(strstr(response, "<TotalUpload>")+13, NULL, 0);
 
     sprintf (request, "GET /api/monitoring/month_statistics HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, VERSION);
     if (send(socket_fd, request, strlen(request), 0) < strlen(request))
@@ -261,8 +262,8 @@ int readModemData(struct config *config, struct huawei *huawei, int socket_fd)
 //    printf ("%s\n", request);
 //    printf ("%s\n", response);
 
-    huawei->monthDown = strtol(strstr(response, "<CurrentMonthDownload>")+22, NULL, 0);
-    huawei->monthUp = strtol(strstr(response, "<CurrentMonthUpload>")+20, NULL, 0);
+    data->monthDown = strtol(strstr(response, "<CurrentMonthDownload>")+22, NULL, 0);
+    data->monthUp = strtol(strstr(response, "<CurrentMonthUpload>")+20, NULL, 0);
 
     sprintf (request, "GET /api/monitoring/start_date HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, VERSION);
     if (send(socket_fd, request, strlen(request), 0) < strlen(request))
@@ -279,9 +280,9 @@ int readModemData(struct config *config, struct huawei *huawei, int socket_fd)
 //    printf ("%s\n", request);
     printf ("%s\n", response);
 
-    huawei->dataLimit = strtol(strstr(response, "<DataLimit>")+11, NULL, 0);
+    data->dataLimit = strtol(strstr(response, "<DataLimit>")+11, NULL, 0);
 
-    printf ("month down/up/limit: %ld/%ld/%ld\n", huawei->monthDown, huawei->monthUp, huawei->dataLimit);
+    printf ("month down/up/limit: %ld/%ld/%ld\n", data->monthDown, data->monthUp, data->dataLimit);
 
     return 1;	// 0 - fail; 1 - success
 }

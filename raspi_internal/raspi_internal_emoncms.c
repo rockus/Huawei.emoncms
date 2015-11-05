@@ -1,4 +1,5 @@
-#include "raspi_emoncms.h"
+#include "raspi_internal_emoncms.h"
+#include "../emoncms.h"
 
 void intHandler(int sig) {
     if (sig==SIGINT) {			// only quit on CTRL-C

@@ -9,26 +9,18 @@
 //#include <termios.h>	// for struct termios, tcgetattr, cfmakeraw, cfsetspeed, tcsetattr, VMIN, VTIMES, CSB, tcdrain
 #include <sysexits.h>	// for EX_IOERR, EX_OK, EX_UNAVAILABLE
 #include <sys/param.h>	// for MAXPATHLEN
-//#include <time.h>	// for ctime, time
+#include <time.h>	// for ctime, time, gettimeofday
 #include <signal.h>	// for sigaction, SIGINT
 
 #include <sys/socket.h>	// for socket
 #include <arpa/inet.h>	// for sockaddr_in
 #include <netdb.h>	// for gethostbyname
 
-#define VERSION "v1.00"
-#define TOOLNAME "Huawei emonCMS"
 #define COPYRIGHT "(c)2015 Oliver Gerler (rockus@rockus.at)"
+#define TOOLNAME "RaspiInternalEmonCMS"
+#define VERSION "v1.00"
 
-// data from GSM/UMTS stick
 struct data
 {
-	char network[16];	// provider network
-	int mcc;			// mobile country code
-	int mnc;			// mobile network code
-	long totDown;		// total download
-	long totUp;			// total upload
-	long monthDown;		// total download
-	long monthUp;		// total upload
-	long dataLimit;		// data limit per month (as configured in web interface of GSM stick)
+	float tempCore;
 };

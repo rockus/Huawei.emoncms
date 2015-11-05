@@ -13,11 +13,11 @@ all: huawei_emoncms raspi_internal_emoncms raspi_pulsecount_emoncms
 
 #######
 
-raspi_internal/raspi_internal_emoncms: raspi_internal/raspi_internal_emoncms.c
-	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+raspi_internal_emoncms: raspi_internal/raspi_internal_emoncms.c
+	$(CC) $(CFLAGS) -o raspi_internal/$@ $^ $(LIBS)
 
-raspi_pulsecount/raspi_pulsecount_emoncms: raspi_pulsecount/raspi_pulsecount_emoncms.c
-	$(CC) $(CFLAGS) -o $@ $^ $(LIBS) -lpigpio -lpthread -lrt
+raspi_pulsecount_emoncms: raspi_pulsecount/raspi_pulsecount_emoncms.c
+	$(CC) $(CFLAGS) -o raspi_pulsecount/$@ $^ $(LIBS) -lpigpio -lpthread -lrt
 
 huawei_emoncms: huawei/huawei_emoncms.c
 	$(CC) $(CFLAGS) -o huawei/$@ $^ $(LIBS)
