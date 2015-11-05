@@ -18,7 +18,7 @@ It should be run as a cronjob, either as user (crontab -e) or globally (/etc/cro
 
 * **Raspi**: Raspi core temp
 
-* Prerequisited: libconfig9, libconfig-dev
+* Prerequisites: libconfig9, libconfig-dev
 
 raspi_pulsecount_emoncms
 ========
@@ -30,3 +30,5 @@ from /etc/rc.local.
 * Connect S0+ to GPIO 4 (P1:07).
 * Connect S0- to GND (P1:09).
 * No external components required, GPIO pull-ups are enabled.
+
+* Prerequisites: libconfig9, libconfig-dev, libpigpio (http://abyz.co.uk/rpi/pigpio/)
