@@ -22,7 +22,7 @@ raspi_pulsecount_emoncms: raspi_pulsecount/raspi_pulsecount_emoncms.c
 huawei_emoncms: huawei/huawei_emoncms.c
 	$(CC) $(CFLAGS) -o huawei/$@ $^ $(LIBS)
 
-banana_dht22_emoncms: banana_dht22/banana_dht22_emoncms.c
+banana_dht22_emoncms: banana_dht22/gatherAndSend.c banana_dht22/banana_dht22_emoncms.c
 	$(CC) $(CFLAGS) -o banana_dht22/$@ $^ $(LIBS) -L /usr/local/lib -lwiringPi
 
 wlan_emoncms: wlan/wlan_emoncms.c
