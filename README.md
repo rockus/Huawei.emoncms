@@ -30,3 +30,14 @@ from /etc/rc.local.
 * No external components required, GPIO pull-ups are enabled.
 
 * Prerequisites: libconfig9, libconfig-dev, [libpigpio] (http://abyz.co.uk/rpi/pigpio/)
+
+wlan_emoncms
+========
+This tool read `/proc/net/wireless` and parses the line identified with the `WlanInterface` config option. LinkQuality,
+SignalLevel and NoiseLevel are delivered to emoncms.
+
+* **MacOSX**: not yet tried
+* **Raspi**: works
+* **Linux**: not yet tried
+
+* Prerequisites: libconfig9, libconfig-dev
