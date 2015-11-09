@@ -9,7 +9,7 @@ LIBS = -lconfig
 
 .PHONY: clean all
 
-all: huawei_emoncms raspi_internal_emoncms raspi_pulsecount_emoncms
+all: huawei_emoncms raspi_internal_emoncms raspi_pulsecount_emoncms banana_dht22_emoncms wlan_emoncms
 
 #######
 
@@ -22,7 +22,13 @@ raspi_pulsecount_emoncms: raspi_pulsecount/raspi_pulsecount_emoncms.c
 huawei_emoncms: huawei/huawei_emoncms.c
 	$(CC) $(CFLAGS) -o huawei/$@ $^ $(LIBS)
 
+banana_dht22_emoncms: banana_dht22/banana_dht22_emoncms.c
+	$(CC) $(CFLAGS) -o banana_dht22/$@ $^ $(LIBS) -L /usr/local/lib -lwiringPi
+
+wlan_emoncms: wlan/wlan_emoncms.c
+	$(CC) $(CFLAGS) -o wlan/$@ $^ $(LIBS)
+
 #######
 
 clean:
-	rm -f *.o *.d *~ core huawei/huawei_emoncms raspi_internal_emoncms/raspi_internal_emoncms raspi_pulsecount_emoncms/raspi_pulsecount_emoncms
+	rm -f *.o *.d *~ core huawei/huawei_emoncms raspi_internal_emoncms/raspi_internal_emoncms raspi_pulsecount_emoncms/raspi_pulsecount_emoncms banana_dht22/banana_dht22_emoncms wlan/wlan_emoncms

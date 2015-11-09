@@ -2,11 +2,17 @@
 # NO SPACES! Use underscores!
 node = "xxxxxxxxx";
 
-# IP address of GSM/UMTS modem
-modemIP = "192.168.8.1";
-
 # host to send data to
 host = "xxxxxxxxxxxx";
 
 # write API key for writing into database, from http://[host]/user/view
 apikey = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+
+# ----------
+# optional configurations, only needed for particular modules
+
+# IP address of GSM/UMTS modem
+modemIP = "192.168.8.1";
+
+# WLAN interface to be monitored
+wlanInterface = "wlan1";
