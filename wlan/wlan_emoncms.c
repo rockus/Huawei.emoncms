@@ -1,6 +1,8 @@
 #include "wlan_emoncms.h"
 #include "../emoncms.h"
 
+volatile int keepRunning;
+
 void intHandler(int sig)
 {
     if (sig==SIGINT)				// only quit on CTRL-C
