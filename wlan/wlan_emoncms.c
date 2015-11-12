@@ -172,7 +172,7 @@ printf ("WLAN Interface name: %s\n", config.pWlanInterface);
 
     close(socket_fd_cms);
 
-    sleep (10);
+    sleep (120);
   } while (keepRunning);
 
     printf ("Closing down.\n");
