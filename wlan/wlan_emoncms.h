@@ -16,9 +16,9 @@
 #include <arpa/inet.h>	// for sockaddr_in
 #include <netdb.h>	// for gethostbyname
 
-#define COPYRIGHT "(c)2015 Oliver Gerler (rockus@rockus.at)"
+#define VERSION "v1.01"
 #define TOOLNAME "WLANEmonCMS"
-#define VERSION "v1.00"
+#define COPYRIGHT "(c)2015,2016 Oliver Gerler (rockus@rockus.at)"
 
 struct data
 {

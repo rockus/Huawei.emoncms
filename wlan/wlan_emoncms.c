@@ -113,7 +113,7 @@ printf ("WLAN Interface name: %s\n", config.pWlanInterface);
         exit(1);
     }
 
-  keepRunning = 1;
+  keepRunning = 0;
   do {
 		// from: http://stackoverflow.com/a/646254
 	sprintf (command, "grep %s /proc/net/wireless", config.pWlanInterface);
@@ -172,7 +172,7 @@ printf ("WLAN Interface name: %s\n", config.pWlanInterface);
 
     close(socket_fd_cms);
 
-    sleep (120);
+//    sleep (120);
   } while (keepRunning);
 
     printf ("Closing down.\n");

@@ -43,10 +43,9 @@ wlan_emoncms
 ========
 This tool read `/proc/net/wireless` and parses the line identified with the `WlanInterface` config option. LinkQuality, SignalLevel and NoiseLevel are delivered to emoncms.
 This is a command line tool. 
-It should be run from `/etc/rc.local` (as it loops internally) as such:
-`/usr/local/sbin/wlan_emoncms -c /etc/emoncms.conf >/dev/null &`
+It should be run as a cronjob, either as user (`crontab -e`) or globally (`/etc/crontab` or from `/etc/cron.hourly/`).
 
-* **BananaPi**: not yet tried
+* **BananaPi**: works
 * **Raspi**: works
 
 * Prerequisites: libconfig9, libconfig-dev
