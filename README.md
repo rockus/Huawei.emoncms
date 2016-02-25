@@ -1,3 +1,7 @@
+initial creation
+----------------
+aclocal && automake --add-missing && autoconf && ./configure && make
+
 huawei_emoncms
 ========
 This tool reads out statistics from Huawei GSM/UMTS sticks and sends them to an [emonCMS] (http://emoncms.org/) host.
