@@ -159,6 +159,8 @@ int main (int argc, char **argv)
 	float elapsedtime_s;				// [s]
 	float power;						// [W]
 
+	syslog(LOG_INFO, "started. waiting for pulse...");
+
     while (!clean_up)
     {
 		pause();
@@ -173,6 +175,9 @@ int main (int argc, char **argv)
 			printf("elapsed seconds: %f\n", elapsedtime_s);
 			power = 1.0 * 3600.0 / elapsedtime_s;				// 1.0Wh per pulse * 3600 s/h / seconds = Whs/hs = W
 			printf("current power: %f\n", power);
+
+			syslog(LOG_INFO, "elapsed seconds: %f, current power: %f", elapsedtime_s, power);
+
 			time_last.tv_sec = time_now.tv_sec;
 			time_last.tv_usec = time_now.tv_usec;
 
@@ -205,6 +210,7 @@ int main (int argc, char **argv)
 
     // clean up (not usually executed until Ctrl-C)
     printf ("clean up.\n");
+	syslog(LOG_INFO, "clean up.");
     close (socket_fd_cms);
     config_destroy(&cfg);
     gpioTerminate();
