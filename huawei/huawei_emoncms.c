@@ -202,7 +202,7 @@ int sendToEmonCMS (struct config *config, struct data *data, int socket_fd)
     printf ("sent: %ld\n", send(socket_fd, tcp_buffer, strlen(tcp_buffer), 0));
 
     // generate json string for emonCMS
-    sprintf (tcp_buffer, "GET /input/post.json?node=\"Raspi\"&json={Tcore:%6.3f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", T, config->pApiKey, config->pHostName, TOOLNAME, VERSION);
+    sprintf (tcp_buffer, "GET /input/post.json?node=\"Raspi\"&json={Tcore:%4.2f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", T, config->pApiKey, config->pHostName, TOOLNAME, VERSION);
     printf ("-----\nbuflen: %ld\n%s\n", strlen(tcp_buffer), tcp_buffer);
     printf ("sent: %ld\n", send(socket_fd, tcp_buffer, strlen(tcp_buffer), 0));
 
