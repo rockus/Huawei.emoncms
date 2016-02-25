@@ -1,6 +1,8 @@
 #include "raspi_internal_emoncms.h"
 #include "../emoncms.h"
 
+volatile int keepRunning;
+
 void intHandler(int sig) {
     if (sig==SIGINT) {			// only quit on CTRL-C
 	keepRunning = 0;
@@ -51,9 +53,13 @@ int main(int argc, char **argv)
 
     // read temperature before anything else: avoids heating due to this code here (improbable, but still)
     char Tbuf[32];
-    fileDescriptor = open ("/sys/class/thermal/thermal_zone0/temp", O_RDONLY);
-    if (!(fileDescriptor))
-        fprintf (stderr, "Could not open /sys/class/thermal/thermal_zone0/temp for read.\n");
+    fileDescriptor = open ("/sys/class/thermal/thermal_zone0/temp", O_RDONLY);	// works on raspi
+    if (fileDescriptor < 0)
+	{
+		fileDescriptor = open ("/sys/devices/platform/sunxi-i2c.0/i2c-0/0-0034/temp1_input", O_RDONLY);	// works on bananapi
+	    if (fileDescriptor < 0)
+			fprintf (stderr, "Could not open temperature file on /sys. Seems we are neither a raspi, nor a banana.\n");
+	}
     read (fileDescriptor, Tbuf, sizeof(Tbuf)-1);
     close (fileDescriptor);
     data.tempCore = strtof(Tbuf, NULL) / 1000.0;
@@ -153,7 +159,7 @@ int sendToEmonCMS (struct config *config, struct data *data, int socket_fd)
 //    printf ("socket_fd: %d\n", socket_fd);
 
     // generate json string for emonCMS
-    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s\"&json={Tcore:%6.3f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, data->tempCore, config->pApiKey, config->pHostName, TOOLNAME, VERSION);
+    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s\"&json={Tcore:%5.3f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, data->tempCore, config->pApiKey, config->pHostName, TOOLNAME, VERSION);
     printf ("-----\nbuflen: %ld\n%s\n", strlen(tcp_buffer), tcp_buffer);
     printf ("sent: %ld\n", send(socket_fd, tcp_buffer, strlen(tcp_buffer), 0));
 

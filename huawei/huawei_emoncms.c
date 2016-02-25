@@ -2,6 +2,7 @@
 #include "../emoncms.h"
 
 double T;
+volatile int keepRunning;
 
 void intHandler(int sig) {
     if (sig==SIGINT) {			// only quit on CTRL-C
