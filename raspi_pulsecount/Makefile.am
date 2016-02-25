@@ -5,8 +5,8 @@
 
 #######
 
-AM_LDFLAGS = -lconfig
+AM_LDFLAGS = -lconfig -lpigpio -lpthread -lrt
 
-sbin_PROGRAMS = huawei_emoncms
+sbin_PROGRAMS = raspi_pulsecount_emoncms
 
-huawei_emoncms_SOURCES = huawei_emoncms.c
+raspi_pulsecount_emoncms_SOURCES = raspi_pulsecount_emoncms.c

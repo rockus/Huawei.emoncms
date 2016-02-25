@@ -2,5 +2,4 @@
 # http://mij.oltrelinux.com/devel/autoconf-automake/
 
 AUTOMAKE_OPTIONS = foreign
-#SUBDIRS = huawei raspi_internal raspi_pulsecount wlan banana_dht22
-SUBDIRS = huawei
+SUBDIRS = huawei raspi_internal raspi_pulsecount wlan banana_dht22

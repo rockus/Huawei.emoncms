@@ -20,7 +20,7 @@
 
 #define COPYRIGHT "(c)2015,2016 Oliver Gerler (rockus@rockus.at)"
 #define TOOLNAME "RaspiPulsecountEmonCMS"
-#define VERSION "v1.01"
+#define RASPI_PULSECOUNT_VERSION "v1.01"
 
 struct data
 {

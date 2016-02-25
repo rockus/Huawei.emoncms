@@ -156,7 +156,7 @@ do {
 void printHelp(void)
 {
 	printf ("\n");
-	printf ("%s %s %s\n", TOOLNAME, VERSION, COPYRIGHT);
+	printf ("%s %s %s\n", TOOLNAME, BANANA_DHT22_VERSION, COPYRIGHT);
 	printf ("\n");
 	printf ("options:\n");
 	printf ("  -c config : specify config file\n");

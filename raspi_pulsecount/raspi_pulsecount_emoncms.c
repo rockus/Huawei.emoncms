@@ -182,7 +182,7 @@ int main (int argc, char **argv)
 			time_last.tv_usec = time_now.tv_usec;
 
 		    // generate json string for emonCMS
-		    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s\"&json={pulseBoiler:1,powerBoiler:%5.3f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config.pNodeName, power, config.pApiKey, config.pHostName, TOOLNAME, VERSION);
+		    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s\"&json={pulseBoiler:1,powerBoiler:%5.3f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config.pNodeName, power, config.pApiKey, config.pHostName, TOOLNAME, RASPI_PULSECOUNT_VERSION);
 	    	printf ("-----\nbuflen: %ld\n%s\n", strlen(tcp_buffer), tcp_buffer);
 
 		    if ((socket_fd_cms = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
@@ -220,7 +220,7 @@ int main (int argc, char **argv)
 void printHelp(void)
 {
 	printf ("\n");
-	printf ("%s %s %s\n", TOOLNAME, VERSION, COPYRIGHT);
+	printf ("%s %s %s\n", TOOLNAME, RASPI_PULSECOUNT_VERSION, COPYRIGHT);
 	printf ("\n");
 	printf ("options:\n");
 	printf ("  -c config : specify config file\n");

@@ -7,6 +7,6 @@
 
 AM_LDFLAGS = -lconfig
 
-sbin_PROGRAMS = huawei_emoncms
+sbin_PROGRAMS = raspi_internal_emoncms
 
-huawei_emoncms_SOURCES = huawei_emoncms.c
+raspi_internal_emoncms_SOURCES = raspi_internal_emoncms.c

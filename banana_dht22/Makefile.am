@@ -5,8 +5,8 @@
 
 #######
 
-AM_LDFLAGS = -lconfig
+AM_LDFLAGS = -lconfig -L /usr/local/lib -lwiringPi
 
-sbin_PROGRAMS = huawei_emoncms
+sbin_PROGRAMS = banana_dht22_emoncms
 
-huawei_emoncms_SOURCES = huawei_emoncms.c
+banana_dht22_emoncms_SOURCES = banana_dht22_emoncms.c gatherAndSend.c

@@ -18,7 +18,7 @@
 
 #define COPYRIGHT "(c)2015 Oliver Gerler (rockus@rockus.at)"
 #define TOOLNAME "RaspiInternalEmonCMS"
-#define VERSION "v1.00"
+#define RASPI_INTERNAL_VERSION "v1.00"
 
 struct data
 {

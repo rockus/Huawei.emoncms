@@ -190,7 +190,7 @@ int sendToEmonCMS (struct config *config, struct data *data, int socket_fd)
 //    printf ("socket_fd: %d\n", socket_fd);
 
     // generate json string for emonCMS
-    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s-WLAN\"&json={LinkQuality:%d,SignalLevel:%d,NoiseLevel:%d}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, data->LinkQuality, data->SignalLevel, data->NoiseLevel, config->pApiKey, config->pHostName, TOOLNAME, VERSION);
+    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s-WLAN\"&json={LinkQuality:%d,SignalLevel:%d,NoiseLevel:%d}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, data->LinkQuality, data->SignalLevel, data->NoiseLevel, config->pApiKey, config->pHostName, TOOLNAME, WLAN_VERSION);
     printf ("-----\nbuflen: %ld\n%s\n", strlen(tcp_buffer), tcp_buffer);
     printf ("sent: %ld\n", send(socket_fd, tcp_buffer, strlen(tcp_buffer), 0));
 
@@ -200,7 +200,7 @@ int sendToEmonCMS (struct config *config, struct data *data, int socket_fd)
 void printHelp(void)
 {
 	printf ("\n");
-	printf ("%s %s %s\n", TOOLNAME, VERSION, COPYRIGHT);
+	printf ("%s %s %s\n", TOOLNAME, WLAN_VERSION, COPYRIGHT);
 	printf ("\n");
 	printf ("options:\n");
 	printf ("  -c config : specify config file\n");

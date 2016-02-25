@@ -111,7 +111,7 @@ int sendToEmonCMS (struct config *config, struct data *data, int socket_fd)
 //    printf ("socket_fd: %d\n", socket_fd);
 
     // generate json string for emonCMS
-    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s-env\"&json={Humidity:%4.2f,Temperature:%4.2f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, data->Humidity, data->Temperature, config->pApiKey, config->pHostName, TOOLNAME, VERSION);
+    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s-env\"&json={Humidity:%4.2f,Temperature:%4.2f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, data->Humidity, data->Temperature, config->pApiKey, config->pHostName, TOOLNAME, BANANA_DHT22_VERSION);
 
     printf ("-----\nbuflen: %ld\n%s\n", strlen(tcp_buffer), tcp_buffer);
     printf ("sent: %ld\n", send(socket_fd, tcp_buffer, strlen(tcp_buffer), 0));

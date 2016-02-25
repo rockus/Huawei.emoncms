@@ -7,6 +7,6 @@
 
 AM_LDFLAGS = -lconfig
 
-sbin_PROGRAMS = huawei_emoncms
+sbin_PROGRAMS = wlan_emoncms
 
-huawei_emoncms_SOURCES = huawei_emoncms.c
+wlan_emoncms_SOURCES = wlan_emoncms.c

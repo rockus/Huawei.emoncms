@@ -203,7 +203,7 @@ int sendToEmonCMS (struct config *config, struct data *data, int socket_fd)
     printf ("sent: %ld\n", send(socket_fd, tcp_buffer, strlen(tcp_buffer), 0));
 
     // generate json string for emonCMS
-    sprintf (tcp_buffer, "GET /input/post.json?node=\"Raspi\"&json={Tcore:%4.2f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", T, config->pApiKey, config->pHostName, TOOLNAME, VERSION);
+    sprintf (tcp_buffer, "GET /input/post.json?node=\"Raspi\"&json={Tcore:%4.2f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", T, config->pApiKey, config->pHostName, TOOLNAME, HUAWEI_VERSION);
     printf ("-----\nbuflen: %ld\n%s\n", strlen(tcp_buffer), tcp_buffer);
     printf ("sent: %ld\n", send(socket_fd, tcp_buffer, strlen(tcp_buffer), 0));
 
@@ -216,7 +216,7 @@ int readModemData(struct config *config, struct data *data, int socket_fd)
     char request[255];
     char response[1024];
 
-    sprintf (request, "GET /api/net/current-plmn/ HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, VERSION);
+    sprintf (request, "GET /api/net/current-plmn/ HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, HUAWEI_VERSION);
     if (send(socket_fd, request, strlen(request), 0) < strlen(request))
     {
 	printf ("send error.\n");
@@ -230,7 +230,7 @@ int readModemData(struct config *config, struct data *data, int socket_fd)
     data->mnc = strtol(strstr(response, "<Numeric>")+9, NULL, 0)-100*data->mcc;		// last 2 digits
 //    printf ("%d %d\n", data->mcc, data->mnc);
 
-    sprintf (request, "GET /api/monitoring/traffic-statistics HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, VERSION);
+    sprintf (request, "GET /api/monitoring/traffic-statistics HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, HUAWEI_VERSION);
     if (send(socket_fd, request, strlen(request), 0) < strlen(request))
     {
 	printf ("send error.\n");
@@ -248,7 +248,7 @@ int readModemData(struct config *config, struct data *data, int socket_fd)
     data->totDown = strtol(strstr(response, "<TotalDownload>")+15, NULL, 0);
     data->totUp = strtol(strstr(response, "<TotalUpload>")+13, NULL, 0);
 
-    sprintf (request, "GET /api/monitoring/month_statistics HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, VERSION);
+    sprintf (request, "GET /api/monitoring/month_statistics HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, HUAWEI_VERSION);
     if (send(socket_fd, request, strlen(request), 0) < strlen(request))
     {
 	printf ("send error.\n");
@@ -266,7 +266,7 @@ int readModemData(struct config *config, struct data *data, int socket_fd)
     data->monthDown = strtol(strstr(response, "<CurrentMonthDownload>")+22, NULL, 0);
     data->monthUp = strtol(strstr(response, "<CurrentMonthUpload>")+20, NULL, 0);
 
-    sprintf (request, "GET /api/monitoring/start_date HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, VERSION);
+    sprintf (request, "GET /api/monitoring/start_date HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, HUAWEI_VERSION);
     if (send(socket_fd, request, strlen(request), 0) < strlen(request))
     {
 	printf ("send error.\n");
@@ -291,7 +291,7 @@ int readModemData(struct config *config, struct data *data, int socket_fd)
 void printHelp(void)
 {
 	printf ("\n");
-	printf ("%s %s %s\n", TOOLNAME, VERSION, COPYRIGHT);
+	printf ("%s %s %s\n", TOOLNAME, HUAWEI_VERSION, COPYRIGHT);
 	printf ("\n");
 	printf ("options:\n");
 	printf ("  -c config : specify config file\n");

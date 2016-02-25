@@ -16,7 +16,7 @@
 #include <arpa/inet.h>	// for sockaddr_in
 #include <netdb.h>	// for gethostbyname
 
-#define VERSION "v1.01"
+#define WLAN_VERSION "v1.01"
 #define TOOLNAME "WLANEmonCMS"
 #define COPYRIGHT "(c)2015,2016 Oliver Gerler (rockus@rockus.at)"
 
