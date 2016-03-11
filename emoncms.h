@@ -2,6 +2,7 @@
 #define EMONCMS_H
 
 #include <libconfig.h>
+#include <syslog.h>
 
 // configuration items
 struct config
