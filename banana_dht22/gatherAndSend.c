@@ -84,7 +84,7 @@ static int read_dht22_dat(struct data *data)
 	// simple plausibility check
 	if (t < -100.0)
 	{
-		syslog(LOG_INFO, "t<100.0 ?!");
+		syslog(LOG_INFO, "error: temp < -100.0.");
 		return 0;
 	}
 
