@@ -144,6 +144,7 @@ int main (int argc, char **argv)
 		exit(1);
     }
 */
+
     // config GPIO
     gpioSetMode (GPIO, PI_INPUT);
     gpioSetPullUpDown (GPIO, PI_PUD_UP);
@@ -201,7 +202,7 @@ int main (int argc, char **argv)
 				if (connect(socket_fd_cms, (struct sockaddr *)&info_cms, sizeof(struct sockaddr)) < 0)	// re-connect each time
 				{
 					fprintf(stderr, "Could not connect to server, err %d.\n", errno);
-					syslog(LOG_WARNING,"Could not connect to server, err %d.", errno);
+					syslog(LOG_WARNING,"Could not connect to server, err %d (%s).", errno, strerror(errno));
 				}
 			    else
 	    		{
