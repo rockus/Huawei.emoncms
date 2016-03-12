@@ -76,9 +76,18 @@ static int read_dht22_dat(struct data *data)
 
 
     printf("Humidity = %.2f %% Temperature = %.2f *C \n", h, t );
+    syslog(LOG_INFO, "Humidity = %.2f %% Temperature = %.2f *C \n", h, t );
 
 	data->Humidity = h;
 	data->Temperature = t;
+
+	// simple plausibility check
+	if (t < -100.0)
+	{
+		syslog(LOG_INFO, "t<100.0 ?!");
+		return 0;
+	}
+
     return 1;
   }
   else
