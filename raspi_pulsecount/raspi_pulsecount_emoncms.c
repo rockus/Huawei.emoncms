@@ -9,7 +9,7 @@ int clean_up=0;
 
 void intHandler (int sig)
 {
-    if (sig==SIGINT)	// Ctrl-C
+    if (sig==SIGINT || sig==SIGTERM)	// Ctrl-C, SIGTERM
 	clean_up=1;
 }
 
@@ -151,6 +151,7 @@ int main (int argc, char **argv)
 
     act.sa_handler = intHandler;
     sigaction(SIGINT, &act, NULL);	// catch Ctrl-C
+    sigaction(SIGTERM, &act, NULL);	// catch kill
 
 	gettimeofday(&time_last, NULL);
 	gettimeofday(&time_now, NULL);
@@ -178,6 +179,12 @@ int main (int argc, char **argv)
 
 			syslog(LOG_INFO, "elapsed seconds: %f, current power: %f", elapsedtime_s, power);
 
+			if (power > 10000.0)
+	    	{
+	    		syslog(LOG_INFO, "error: power >10kW.");
+	    	}
+	    	else
+			{
 			time_last.tv_sec = time_now.tv_sec;
 			time_last.tv_usec = time_now.tv_usec;
 
@@ -194,6 +201,7 @@ int main (int argc, char **argv)
 				if (connect(socket_fd_cms, (struct sockaddr *)&info_cms, sizeof(struct sockaddr)) < 0)	// re-connect each time
 				{
 					fprintf(stderr, "Could not connect to server, err %d.\n", errno);
+					syslog(LOG_WARNING,"Could not connect to server, err %d.", errno);
 				}
 			    else
 	    		{
@@ -204,6 +212,7 @@ int main (int argc, char **argv)
 					    printf ("sent: %ld\n", num);
 	    		}
 		    	close (socket_fd_cms);
+	    	}
 	    	}
 		}
     }
