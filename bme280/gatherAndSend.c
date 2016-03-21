@@ -34,9 +34,11 @@ void do_single_measurement(int fd)
   address = 0xf2; // ctrl_hum;
   byte = 0b00000001;	// osrs_h=1x
   wiringPiI2CWriteReg8(fd, address, byte);
+
   address = 0xf4; // ctrl_meas;
   byte = 0b00100101;	// osrs_t=1x, osrs_p=1x, mode=forced
   wiringPiI2CWriteReg8(fd, address, byte);
+
   do {
     address = 0xf3; // status
     byte = wiringPiI2CReadReg8(fd, address);
@@ -214,21 +216,19 @@ int compensate_data(int fd, struct data *data)
 //  printf ("H: %5.2f%%\n", H);
 
 
-    printf("Humidity:%.2f%% Temperature:%.2f*C Pressure:%.2fPa\n", H, T, 0.0 );
-    syslog(LOG_INFO, "Humidity:%.2f%% Temperature:%.2f*C Pressure:%.2fPa\n", H, T, 0.0 );
+    printf("Humidity:%.2f%% Temperature:%.2f°C Pressure:%.2fPa\n", H, T, 0.0 );
+    syslog(LOG_INFO, "Humidity:%.2f%% Temperature:%.2f°C Pressure:%.2fPa\n", H, T, 0.0 );
 
 	data->Humidity = H;
 	data->Temperature = T;
 
-#undef DOHERE
-#ifdef DOHERE
 	// simple plausibility check
-	if (t < -100.0)
+	if (T < -100.0)
 	{
 		syslog(LOG_INFO, "error: temp < -100.0.");
 		return 0;
 	}
-#endif
+
     return 1;
 }
 
@@ -250,7 +250,7 @@ int gatherData(struct config *config, struct data *data)
 	// read calibration data and compensat
     compensate_data(fd, data);
 
-	printf ("h: %5.2f%%\nt: %5.2fC\np: %5.2fPa\n", data->Humidity, data->Temperature, data->Pressure);
+	printf ("H: %5.2f%%\nT: %5.2f°C\nP: %5.2fPa\n", data->Humidity, data->Temperature, data->Pressure);
 
 	return 1;
 }
@@ -264,7 +264,7 @@ int sendToEmonCMS (struct config *config, struct data *data, int socket_fd)
 //    printf ("socket_fd: %d\n", socket_fd);
 
     // generate json string for emonCMS
-    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s-env\"&json={Humidity:%4.2f,Temperature:%4.2f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, data->Humidity, data->Temperature, config->pApiKey, config->pHostName, TOOLNAME, BME280_VERSION);
+    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s-env\"&json={Humidity-BME280:%4.2f,Temperature-BME280:%4.2f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, data->Humidity, data->Temperature, config->pApiKey, config->pHostName, TOOLNAME, BME280_VERSION);
 
     printf ("-----\nbuflen: %ld\n%s\n", strlen(tcp_buffer), tcp_buffer);
     printf ("sent: %ld\n", send(socket_fd, tcp_buffer, strlen(tcp_buffer), 0));

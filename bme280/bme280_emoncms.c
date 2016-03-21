@@ -124,12 +124,12 @@ printf ("i2c bus: %s\n", config.pi2cBus);
 		config_destroy(&cfg);
 		return(EXIT_FAILURE);
 	}
-
+/*
   } while (keepRunning);
 config_destroy(&cfg);
 return (EXIT_FAILURE);
 do {
-
+*/
     if ((socket_fd_cms = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
     {
         fprintf(stderr, "Could not allocate socket, err %d.\n", errno);
