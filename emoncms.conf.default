@@ -16,3 +16,6 @@ modemIP = "192.168.8.1";
 
 # WLAN interface to be monitored
 wlanInterface = "wlan1";
+
+# I2C bus device (for BME280)
+i2cbus = "/dev/i2c-2";

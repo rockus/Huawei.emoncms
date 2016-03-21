@@ -9,7 +9,7 @@
 AC_INIT(emoncms.modules, 1.0, rockus@rockus.at)
 AM_INIT_AUTOMAKE
 AC_PROG_CC
-AC_CONFIG_FILES([Makefile huawei/Makefile raspi_internal/Makefile raspi_pulsecount/Makefile wlan/Makefile banana_dht22/Makefile])
+AC_CONFIG_FILES([Makefile huawei/Makefile raspi_internal/Makefile raspi_pulsecount/Makefile wlan/Makefile banana_dht22/Makefile bme280/Makefile])
 
 dnl Banana-only code enabled by default
 AC_ARG_ENABLE([banana], AS_HELP_STRING(--disable-banana, [disable Banana-only modules]))

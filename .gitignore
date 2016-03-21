@@ -19,3 +19,4 @@ huawei/huawei_emoncms
 raspi_internal/raspi_internal_emoncms
 raspi_pulsecount/raspi_pulsecount_emoncms
 wlan/wlan_emoncms
+bme280/bme280_emoncms

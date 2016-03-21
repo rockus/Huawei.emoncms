@@ -14,6 +14,7 @@ struct config
 	// config options particular to single modules
 	const char *pModemIP;
 	const char *pWlanInterface;
+	const char *pi2cBus;
 };
 
 // common function declarations
