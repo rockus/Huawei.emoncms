@@ -58,7 +58,18 @@ banana_dht22_emoncms
 ========
 This tool interfaces to a DHT22 temperature/humidity sensor connected to GPIO2. The sensor also needs a 3.3V supply from the GPIO header.
 This is a command line tool. 
-It should be run as a cronjob, either as user (`crontab -e`) or globally (`/etc/crontab` or from `/etc/cron.hourly/`).
+It should be run as a cronjob from `/etc/crontab` or `/etc/cron.hourly/`.
+
+* **BananaPi**: works
+* **Raspi**: not yet tried
+
+* Prerequisites: libconfig9, libconfig-dev, [wiringPi] (http://wiringpi.com/)
+
+bme280_emoncms
+========
+This tool interfaces to a BME280 temperature/humidity/pressure sensor connected to I2C bus 2. The sensor module from Watterot also needs a 3.3V supply from the GPIO header.
+This is a command line tool.
+It should be run as a cronjob from `/etc/crontab` or `/etc/cron.hourly/`.
 
 * **BananaPi**: works
 * **Raspi**: not yet tried
