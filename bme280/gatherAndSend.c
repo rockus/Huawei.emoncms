@@ -31,12 +31,19 @@ void do_single_measurement(int fd)
 {
   int address, byte;
   // configure bme280, execute single measurement and wait for completion
+  address = 0xf5; // config
+  byte = 0b0000100;		// t_sb=0.5ms, filter=4, spi3w_en=off
+  wiringPiI2CWriteReg8(fd, address, byte);
+
   address = 0xf2; // ctrl_hum;
-  byte = 0b00000001;	// osrs_h=1x
+//  byte = 0b00000001;	// osrs_h=1x
+  byte = 0b00000011;	// osrs_h=4x
   wiringPiI2CWriteReg8(fd, address, byte);
 
   address = 0xf4; // ctrl_meas;
-  byte = 0b00100101;	// osrs_t=1x, osrs_p=1x, mode=forced
+//  byte = 0b00111111;	// osrs_t=1x, osrs_p=16x, mode=normal
+//  byte = 0b00100101;	// osrs_t=1x, osrs_p=1x, mode=forced
+  byte = 0b01101101;	// osrs_t=4x, osrs_p=4x, mode=forced
   wiringPiI2CWriteReg8(fd, address, byte);
 
   do {
@@ -94,8 +101,8 @@ int compensate_data(int fd, struct data *data)
 {
   int address, byte;
 
-  unsigned short dig_T1, dig_T2, dig_T3;
-  unsigned char dig_H1, dig_H3;
+  unsigned short dig_T1;
+  signed short dig_T2, dig_T3;
   // dig_T1
   address = 0x89; // dig_T1[15:8]
   byte = wiringPiI2CReadReg8(fd, address);
@@ -140,23 +147,23 @@ int compensate_data(int fd, struct data *data)
 //  printf ("t_fine: %f\n", t_fine);
 //  printf ("T: %f\n", T);
 
-/*
+
   long signed int ivar1, ivar2, it_fine, iT;
   ivar1 = ((((data->temp_raw>>3) - ((int32_t)dig_T1<<1))) * ((int32_t)dig_T2)) >> 11;
   ivar2 = (((((data->temp_raw>>4) - ((int32_t)dig_T1)) * ((data->temp_raw>>4) - ((int32_t)dig_T1))) >> 12) * ((int32_t)dig_T3)) >> 14;
   it_fine = ivar1 + ivar2;
-
+/*
   iT = (it_fine * 5 + 128) >> 8;
   printf ("ivar1: %ld\n", ivar1);
   printf ("ivar2: %ld\n", ivar2);
   printf("it_fine: %ld\n", it_fine);
-  printf ("iT: %5.2fC\n", data->Temperature);
+  printf ("iT: %5.2fC\n", iT);
 */
 
 
+  unsigned char dig_H1, dig_H3;
   signed short dig_H2, dig_H4, dig_H5;
   signed char dig_H6;
-
   // dig_H1
   address = 0xa1; // dig_H1[7:0]
   byte = wiringPiI2CReadReg8(fd, address);
@@ -221,7 +228,6 @@ int compensate_data(int fd, struct data *data)
 
   unsigned short dig_P1;
   signed short dig_P2, dig_P3, dig_P4, dig_P5, dig_P6, dig_P7, dig_P8, dig_P9;
-
   // dig_P1
   address = 0x8f; // dig_P1[15:8]
   byte = wiringPiI2CReadReg8(fd, address);
@@ -342,29 +348,23 @@ int compensate_data(int fd, struct data *data)
     P = 0.0;
   }
 
-/*
-  long unsigned int iP;
-  ivar1 = (((int32_t)it_fine)>>1) - (int32_t)64000;
-  ivar2 = (((ivar1>>2) * (ivar1>>2)) >> 11 ) * ((int32_t)dig_P6);
-  ivar2 = ivar2 + ((ivar1*((int32_t)dig_P5))<<1);
-  ivar2 = (ivar2>>2)+(((int32_t)dig_P4)<<16);
-  ivar1 = (((((int32_t)dig_P3) * (((ivar1>>2) * (ivar1>>2)) >> 13 )) >> 3) + ((((int32_t)dig_P2) * ivar1)>>1))>>18;
-  ivar1 = ((((32768+ivar1))*((int32_t)dig_P1))>>15);
+// http://cactus.io/hookups/sensors/barometric/bme280/hookup-arduino-to-bme280-barometric-pressure-sensor
+// http://static.cactus.io/downloads/library/bme280/cactus_io_BME280_I2C.zip
+  int64_t lvar1, lvar2, lP;
+  lvar1 = ((int64_t)it_fine) - 128000;
+  lvar2 = lvar1 * lvar1 * (int64_t)dig_P6;
+  lvar2 = lvar2 + ((lvar1*(int64_t)dig_P5)<<17);
+  lvar2 = lvar2 + (((int64_t)dig_P4)<<35);
+  lvar1 = ((lvar1 * lvar1 * (int64_t)dig_P3)>>8) + ((lvar1 * (int64_t)dig_P2)<<12);
+  lvar1 = ((((((int64_t)1)<<47) + lvar1)) * ((int64_t)dig_P1)>>33);
   // avoid divide-by-zero here
-  iP = (((uint32_t)(((int32_t)1048576)-((int32_t)data->press_raw))-(ivar2>>12)))*3125;
-  if (iP < 0x80000000)
-  {
-    iP = (iP << 1) / ((uint32_t)ivar1);
-  }
-  else
-  {
-    iP = (iP / ((uint32_t)ivar1)) * 2.0;
-  }
-  ivar1 = (((int32_t)dig_P9) * ((int32_t)(((iP>>3) * (iP>>3))>>13)))>>12;
-  ivar2 = (((int32_t)(iP>>2)) * ((int32_t)dig_P8))>>13;
-  iP = (uint32_t)((int32_t)iP + ((ivar1 + ivar2 + dig_P7) >> 4));
-  printf ("iP: %lu\n", iP);
-*/
+  lP = 1048576 - (int32_t)data->press_raw;
+  lP = (((lP<<31) - lvar2)*3125) / lvar1;
+  lvar1 = (((int64_t)dig_P9) * (lP>>13) * (lP>>13)) >> 25;
+  lvar2 = (((int64_t)dig_P8) * lP) >>19;
+  lP = ((lP + lvar1 + lvar2) >> 8) + (((int64_t)dig_P7)<<4);
+  printf ("lP: %f\n", lP/256.0);
+
 
   printf("Humidity:%.2f%% Temperature:%.2f°C Pressure:%.2fhPa\n", H, T, P/100.0 );
   syslog(LOG_INFO, "Humidity:%.2f%% Temperature:%.2f°C Pressure:%.2fhPa\n", H, T, P/100.0 );
