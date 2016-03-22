@@ -25,18 +25,27 @@ AM_CONDITIONAL([bme280_cond], [test "x$enable_bme280" != xno])
 
 
 
+dnl all modules need libconfig
+AC_CHECK_LIB([config], [config_init], [], [AC_MSG_ERROR([Library config9 not found.])])
+
 
 dnl WiringPi required by banana_dht22 and bme280
 dnl PiGPIO reqired by raspi_pulsecount
+
+dnl for libpigpio
+LIBS="$LIBS -lrt"
 
 need_libwiringpi="no"
 need_libpigpio="no"
 
 if test "x$enable_raspi_pulsecount" != "xno"; then
-  need_libwiringpi="yes"
+dnl  need_libwiringpi="yes"
   need_libpigpio="yes"
 fi
 if test "x$enable_bme280" != "xno"; then
+  need_libwiringpi="yes"
+fi
+if test "x$enable_banana_dht22" != "xno"; then
   need_libwiringpi="yes"
 fi
 
