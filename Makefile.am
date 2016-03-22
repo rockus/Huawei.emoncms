@@ -4,7 +4,14 @@
 
 AUTOMAKE_OPTIONS = foreign
 
-if banana_cond
-    banana_dir = banana_dht22
+if banana_dht22_cond
+    banana_dht22_dir = banana_dht22
 endif
-SUBDIRS = huawei raspi_internal raspi_pulsecount wlan $(banana_dir) bme280
+if raspi_pulsecount_cond
+    raspi_pulsecount_dir = raspi_pulsecount
+endif
+if bme280_cond
+    bme280_dir = bme280
+endif
+
+SUBDIRS = huawei raspi_internal $(raspi_pulsecount_dir) wlan $(banana_dht22_dir) $(bme280_dir)
