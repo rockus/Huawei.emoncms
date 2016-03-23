@@ -13,5 +13,8 @@ endif
 if bme280_cond
     bme280_dir = bme280
 endif
+if axp209_cond
+    axp209_dir = axp209
+endif
 
-SUBDIRS = huawei raspi_internal $(raspi_pulsecount_dir) wlan $(banana_dht22_dir) $(bme280_dir)
+SUBDIRS = huawei raspi_internal $(raspi_pulsecount_dir) wlan $(banana_dht22_dir) $(bme280_dir) $(axp209_dir)
