@@ -48,13 +48,14 @@ dnl  need_libwiringpi="yes"
 fi
 if test "x$enable_banana_dht22" != "xno"; then
   need_libwiringpi="yes"
+fi
 if test "x$enable_bme280" != "xno"; then
   need_libwiringpi="yes"
 fi
 if test "x$enable_axp209" != "xno"; then
   need_libwiringpi="yes"
 fi
-fi
+
 
 if test "x$need_libwiringpi" != "xno"; then
   AC_CHECK_LIB([wiringPi], [wiringPiSetup], [], [AC_MSG_ERROR([Library wiringPi not found.])])
