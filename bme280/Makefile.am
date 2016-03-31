@@ -5,7 +5,7 @@
 
 #######
 
-AM_LDFLAGS = -lconfig -L /usr/local/lib -lwiringPi
+AM_LDFLAGS = -lconfig -L /usr/local/lib -lwiringPi -lm
 
 sbin_PROGRAMS = bme280_emoncms
 

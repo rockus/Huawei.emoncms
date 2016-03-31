@@ -1,5 +1,6 @@
 #include "bme280_emoncms.h"
 #include "../emoncms.h"
+#include <math.h>
 
 // https://github.com/nahidalam/raspberryPi/blob/master/i2ctest.c
 
@@ -383,6 +384,26 @@ int compensate_data(int fd, struct data *data)
   return 1;
 }
 
+void calc_reduced_press(struct data *data)
+{
+	float h, t, p, x;	// height, temperature, pressure; temporary variable
+
+	h = 360.0;
+	p = (float)data->Pressure / 100.0;
+	t = (float)data->Temperature + 273.15;
+//	printf ("sensor press: %.2fhPa\n", p);
+//	printf ("sensor temp: %.2fK\n", t);
+//	printf ("height above MSL: %.2fm\n", h);
+
+	// barometric height formula: http://wetter.andreae-gymnasium.de/interaktives/Druck/barometrische.htm
+	data->PressureReduced = p / pow(1-(0.0065*h/t),5.255) * 100.0;	// and convert into Pa
+//	printf ("temporary: %f\n", data->PressureReduced);
+//	data->PressureReduced = p / pow((100-(h/t*0.65))/100,5.255);
+//	printf ("temporary: %f\n", data->PressureReduced);
+
+//	printf ("\n");
+}
+
 int gatherData(struct config *config, struct data *data)
 // return 0 on error
 {
@@ -401,7 +422,10 @@ int gatherData(struct config *config, struct data *data)
 	// read calibration data and compensat
     compensate_data(fd, data);
 
-	printf ("H: %5.2f%%\nT: %5.2f°C\nP: %5.2fPa\n", data->Humidity, data->Temperature, data->Pressure);
+	// calculate reduced barometric pressure
+	calc_reduced_press(data);
+
+	printf ("H: %5.2f%%\nT: %5.2f°C\nP: %5.2fPa\nPred: %5.2fPa\n", data->Humidity, data->Temperature, data->Pressure, data->PressureReduced);
 
 	return 1;
 }
@@ -415,7 +439,7 @@ int sendToEmonCMS (struct config *config, struct data *data, int socket_fd)
 //    printf ("socket_fd: %d\n", socket_fd);
 
     // generate json string for emonCMS
-    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s-env\"&json={Humidity-BME280:%4.2f,Temperature-BME280:%4.2f,Pressure-BME280:%4.2f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, data->Humidity, data->Temperature, data->Pressure, config->pApiKey, config->pHostName, TOOLNAME, BME280_VERSION);
+    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s-env\"&json={Humidity-BME280:%4.2f,Temperature-BME280:%4.2f,Pressure-BME280:%4.2f,PressureReduced-BME280:%4.2f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, data->Humidity, data->Temperature, data->Pressure, data->PressureReduced, config->pApiKey, config->pHostName, TOOLNAME, BME280_VERSION);
 
     printf ("-----\nbuflen: %ld\n%s\n", strlen(tcp_buffer), tcp_buffer);
     printf ("sent: %ld\n", send(socket_fd, tcp_buffer, strlen(tcp_buffer), 0));

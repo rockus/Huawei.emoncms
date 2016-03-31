@@ -24,7 +24,7 @@
 
 #define COPYRIGHT "(c)2016 Oliver Gerler (rockus@rockus.at)"
 #define TOOLNAME "BME280EmonCMS"
-#define BME280_VERSION "v1.00"
+#define BME280_VERSION "v1.01"
 
 struct data
 {
@@ -34,6 +34,7 @@ struct data
 	float Humidity;
 	float Temperature;
 	float Pressure;
+	float PressureReduced;
 };
 
 #endif
