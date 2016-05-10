@@ -198,7 +198,7 @@ int sendToEmonCMS (struct config *config, struct data *data, int socket_fd)
 //    printf ("socket_fd: %d\n", socket_fd);
 
     // generate json string for emonCMS
-    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s\"&json={mcc:%d,mnc:%d,totdown:%ld,totup:%ld,monthdown:%ld,monthup:%ld,monthlimit:%ld}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, data->mcc, data->mnc, data->totDown, data->totUp, data->monthDown, data->monthUp, data->dataLimit, config->pApiKey, config->pHostName, TOOLNAME, HUAWEI_VERSION);
+    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s\"&json={mcc:%d,mnc:%d,lac:%d,cid:%d,sc:%d,rssi:%d,rscp:%d,ecio:%d,totdown:%ld,totup:%ld,monthdown:%ld,monthup:%ld,monthlimit:%ld}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, data->mcc, data->mnc, data->lac, data->cid, data->sc, data->rssi, data->rscp, data->ecio, data->totDown, data->totUp, data->monthDown, data->monthUp, data->dataLimit, config->pApiKey, config->pHostName, TOOLNAME, HUAWEI_VERSION);
     printf ("-----\nbuflen: %ld\n%s\n", strlen(tcp_buffer), tcp_buffer);
     printf ("sent: %ld\n", send(socket_fd, tcp_buffer, strlen(tcp_buffer), 0));
 
@@ -215,6 +215,28 @@ int readModemData(struct config *config, struct data *data, int socket_fd)
 {
     char request[255];
     char response[1024];
+    sprintf (request, "GET /api/device/signal/ HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, HUAWEI_VERSION);
+    if (send(socket_fd, request, strlen(request), 0) < strlen(request))
+    {
+	printf ("send error.\n");
+    }
+    if (recv(socket_fd, response, sizeof(response), 0) == 0)
+    {
+	printf ("receive error.\n");
+    }
+    data->sc = strtol(strstr(response, "<sc>")+4, NULL, 0);
+    data->rssi = strtol(strstr(response, "<rssi>")+6, NULL, 0);
+    data->rscp = strtol(strstr(response, "<rscp>")+6, NULL, 0);
+    data->ecio = strtol(strstr(response, "<ecio>")+6, NULL, 0);
+    long tmp;
+    tmp = strtol(strstr(response, "<cell_id>")+9, NULL, 0);
+    data->lac = (tmp&0xff0000)>>16;
+    data->cid = tmp&0xffff;
+printf ("sc: %d\n", data->sc);
+printf ("rssi: %d\n", data->rssi);
+printf ("rscp: %d\n", data->rscp);
+printf ("ecio: %d\n", data->ecio);
+printf ("tmp:%d 0x%06x lac:%d 0x%02x cid:%d 0x%04x\n", tmp, tmp, data->lac, data->lac, data->cid, data->cid);
 
     sprintf (request, "GET /api/net/current-plmn/ HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, HUAWEI_VERSION);
     if (send(socket_fd, request, strlen(request), 0) < strlen(request))
@@ -279,7 +301,7 @@ int readModemData(struct config *config, struct data *data, int socket_fd)
 	printf ("receive error.\n");
     }
 //    printf ("%s\n", request);
-    printf ("%s\n", response);
+//    printf ("%s\n", response);
 
     data->dataLimit = strtol(strstr(response, "<DataLimit>")+11, NULL, 0);
 
