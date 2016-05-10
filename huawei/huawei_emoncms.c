@@ -145,7 +145,7 @@ printf ("modem: %s %s\n", he_modem->h_name, inet_ntoa(ipv4addr));
     info_cms.sin_addr = *((struct in_addr *)he_cms->h_addr);
     if (connect(socket_fd_cms, (struct sockaddr *)&info_cms, sizeof(struct sockaddr)) < 0)
     {
-        fprintf(stderr, "Could not connect to server, err%d.\n", errno);
+        fprintf(stderr, "Could not connect to server, err %d.\n", errno);
         close(socket_fd_cms);
 		config_destroy(&cfg);
         exit(1);
@@ -163,7 +163,7 @@ printf ("modem: %s %s\n", he_modem->h_name, inet_ntoa(ipv4addr));
     info_modem.sin_addr = *((struct in_addr *)he_modem->h_addr);
     if (connect(socket_fd_modem, (struct sockaddr *)&info_modem, sizeof(struct sockaddr)) < 0)
     {
-        fprintf(stderr, "Could not connect to server, err%d.\n", errno);
+        fprintf(stderr, "Could not connect to modem, err %d.\n", errno);
         close(socket_fd_modem);
         close(socket_fd_cms);
 		config_destroy(&cfg);
