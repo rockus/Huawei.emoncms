@@ -3,7 +3,7 @@
 
 // from https://github.com/technion/lol_dht22
 
-static int DHTPIN = 2;
+//static int DHTPIN = 2;
 static int dht22_dat[5] = {0,0,0,0,0};
 
 static uint8_t sizecvt(const int read)
@@ -19,7 +19,7 @@ static uint8_t sizecvt(const int read)
   return (uint8_t)read;
 }
 
-static int read_dht22_dat(struct data *data)
+static int read_dht22_dat(struct config *config, struct data *data)
 {
   uint8_t laststate = HIGH;
   uint8_t counter = 0;
@@ -27,29 +27,32 @@ static int read_dht22_dat(struct data *data)
 
   dht22_dat[0] = dht22_dat[1] = dht22_dat[2] = dht22_dat[3] = dht22_dat[4] = 0;
 
+//  int pDHTpin = 2;
+  int pDHTpin = config->pDHTpin;
+
   // pull pin down for 18 milliseconds
-  pinMode(DHTPIN, OUTPUT);
-  digitalWrite(DHTPIN, HIGH);
+  pinMode(pDHTpin, OUTPUT);
+  digitalWrite(pDHTpin, HIGH);
   delay(10);
-  digitalWrite(DHTPIN, LOW);
+  digitalWrite(pDHTpin, LOW);
   delay(18);
   // then pull it up for 40 microseconds
-  digitalWrite(DHTPIN, HIGH);
+  digitalWrite(pDHTpin, HIGH);
   delayMicroseconds(40);
   // prepare to read the pin
-  pinMode(DHTPIN, INPUT);
+  pinMode(pDHTpin, INPUT);
 
   // detect change and read data
   for ( i=0; i< MAXTIMINGS; i++) {
     counter = 0;
-    while (sizecvt(digitalRead(DHTPIN)) == laststate) {
+    while (sizecvt(digitalRead(pDHTpin)) == laststate) {
       counter++;
       delayMicroseconds(1);
       if (counter == 255) {
         break;
       }
     }
-    laststate = sizecvt(digitalRead(DHTPIN));
+    laststate = sizecvt(digitalRead(pDHTpin));
 
     if (counter == 255) break;
 
@@ -102,11 +105,14 @@ int gatherData(struct config *config, struct data *data)
   int i;
 
   if (wiringPiSetup () == -1)
+  {
+    printf ("WiringPiSetup() failed.\n");
     return (0);
+  }
 
   for (i=0; i<MAXTRIES; i++)
   {
-    if (read_dht22_dat(data))
+    if (read_dht22_dat(config, data))
     {
       printf ("h: %5.2f%%\nt: %5.2fC\n", data->Humidity, data->Temperature);
       return 1;

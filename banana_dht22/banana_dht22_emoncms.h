@@ -23,7 +23,7 @@
 
 #define COPYRIGHT "(c)2017 Oliver Gerler (rockus@rockus.at)"
 #define TOOLNAME "DHT22EmonCMS"
-#define BANANA_DHT22_VERSION "v1.01"
+#define BANANA_DHT22_VERSION "v1.02"
 
 #define MAXTIMINGS 85
 

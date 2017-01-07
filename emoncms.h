@@ -15,6 +15,7 @@ struct config
 	const char *pModemIP;
 	const char *pWlanInterface;
 	const char *pi2cBus;
+	int pDHTpin;
 };
 
 // common function declarations

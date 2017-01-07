@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 		config_destroy(&cfg);
 		return(EXIT_FAILURE);
     }
-    // node, host, apikey
+    // node, host, apikey, dht_pin
     if (!(config_lookup_string(&cfg, "node", &(config.pNodeName))))
     {
 		fprintf(stderr, "No 'node' setting in configuration file.\n");
@@ -89,11 +89,18 @@ int main(int argc, char **argv)
 		config_destroy(&cfg);
 		return(EXIT_FAILURE);
     }
+    if (!(config_lookup_int(&cfg, "dht_pin", &(config.pDHTpin))))
+    {
+		fprintf(stderr, "No 'dht_pin' setting in configuration file.\n");
+		config_destroy(&cfg);
+		return(EXIT_FAILURE);
+    }
 
 printf ("conf file: %s\n", configFilePath);
 printf ("host: %s\n", config.pHostName);
 printf ("node: %s\n", config.pNodeName);
 printf ("API key: %s\n", config.pApiKey);
+printf ("DHT pin: %d\n", config.pDHTpin);
 
     if (!(he_cms = gethostbyname(config.pHostName)))
     {
