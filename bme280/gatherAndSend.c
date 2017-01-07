@@ -5,6 +5,7 @@
 // https://github.com/nahidalam/raspberryPi/blob/master/i2ctest.c
 
 // return file descriptor of first BME280 found
+// return 0 on error
 int find_bme280(void)
 {
   int fd, byte;
@@ -20,11 +21,13 @@ int find_bme280(void)
     fd = wiringPiI2CSetup (0x77);
     byte = wiringPiI2CReadReg8(fd,0xd0);
     if (byte == 0x60)
-	  printf ("BME280 ID found at 0x77.\n");
-	else
-	  printf ("No BME280 ID found.\n");
+        printf ("BME280 ID found at 0x77.\n");
+    else
+    {
+        printf ("No BME280 ID found.\n");
+        return 0;
+    }
   }
-
   return fd;
 }
 
@@ -407,20 +410,21 @@ void calc_reduced_press(struct data *data)
 int gatherData(struct config *config, struct data *data)
 // return 0 on error
 {
-	int fd;
+    int fd;
 
-	// check for device present on both addresses (0x76 and 0x77),
-	// use first found
-	fd = find_bme280();
-
-	// config and execute one-shot measurement
-    do_single_measurement(fd);
+    // check for device present on both addresses (0x76 and 0x77),
+    // use first found
+    fd = find_bme280();
+    if (fd)
+    {
+        // config and execute one-shot measurement
+        do_single_measurement(fd);
 
 	// read out raw data
 	read_bme280_dat(fd, data);
 
 	// read calibration data and compensat
-    compensate_data(fd, data);
+        compensate_data(fd, data);
 
 	// calculate reduced barometric pressure
 	calc_reduced_press(data);
@@ -428,6 +432,11 @@ int gatherData(struct config *config, struct data *data)
 	printf ("H: %5.2f%%\nT: %5.2f°C\nP: %5.2fPa\nPred: %5.2fPa\n", data->Humidity, data->Temperature, data->Pressure, data->PressureReduced);
 
 	return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 // send data to emonCMS
