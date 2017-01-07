@@ -1,9 +1,8 @@
-#include "banana_dht22_emoncms.h"
+#include "dht22_emoncms.h"
 #include "../emoncms.h"
 
 // from https://github.com/technion/lol_dht22
 
-//static int DHTPIN = 2;
 static int dht22_dat[5] = {0,0,0,0,0};
 
 static uint8_t sizecvt(const int read)
@@ -27,7 +26,6 @@ static int read_dht22_dat(struct config *config, struct data *data)
 
   dht22_dat[0] = dht22_dat[1] = dht22_dat[2] = dht22_dat[3] = dht22_dat[4] = 0;
 
-//  int pDHTpin = 2;
   int pDHTpin = config->pDHTpin;
 
   // pull pin down for 18 milliseconds
@@ -135,7 +133,7 @@ int sendToEmonCMS (struct config *config, struct data *data, int socket_fd)
 //    printf ("socket_fd: %d\n", socket_fd);
 
     // generate json string for emonCMS
-    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s-env\"&json={Humidity:%4.2f,Temperature:%4.2f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, data->Humidity, data->Temperature, config->pApiKey, config->pHostName, TOOLNAME, BANANA_DHT22_VERSION);
+    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s-env\"&json={Humidity:%4.2f,Temperature:%4.2f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, data->Humidity, data->Temperature, config->pApiKey, config->pHostName, TOOLNAME, DHT22_VERSION);
 
     printf ("-----\nbuflen: %ld\n%s\n", strlen(tcp_buffer), tcp_buffer);
     printf ("sent: %ld\n", send(socket_fd, tcp_buffer, strlen(tcp_buffer), 0));

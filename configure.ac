@@ -6,14 +6,14 @@
 
 #    aclocal && automake --add-missing && autoconf && ./configure && make
 
-AC_INIT(emoncms.modules, 1.0, rockus@rockus.at)
+AC_INIT(emoncms.modules, 2.0, rockus@rockus.at)
 AM_INIT_AUTOMAKE
 AC_PROG_CC
-AC_CONFIG_FILES([Makefile huawei/Makefile raspi_internal/Makefile raspi_pulsecount/Makefile wlan/Makefile banana_dht22/Makefile bme280/Makefile axp209/Makefile])
+AC_CONFIG_FILES([Makefile huawei/Makefile raspi_internal/Makefile raspi_pulsecount/Makefile wlan/Makefile dht22/Makefile bme280/Makefile axp209/Makefile])
 
-dnl banana_dht22 code enabled by default
-AC_ARG_ENABLE([banana_dht22], AS_HELP_STRING(--disable-banana_dht22, [disable banana_dht22 module]))
-AM_CONDITIONAL([banana_dht22_cond], [test "x$enable_banana_dht22" != xno])
+dnl dht22 code enabled by default
+AC_ARG_ENABLE([dht22], AS_HELP_STRING(--disable-dht22, [disable dht22 module]))
+AM_CONDITIONAL([dht22_cond], [test "x$enable_dht22" != xno])
 
 dnl raspi_pulsecount code enabled by default
 AC_ARG_ENABLE([raspi_pulsecount], AS_HELP_STRING(--disable-raspi_pulsecount, [disable raspi_pulsecount module]))
@@ -33,7 +33,7 @@ dnl all modules need libconfig
 AC_CHECK_LIB([config], [config_init], [], [AC_MSG_ERROR([Library config9 not found.])])
 
 
-dnl WiringPi required by banana_dht22, bme280, axp209
+dnl WiringPi required by dht22, bme280, axp209
 dnl PiGPIO reqired by raspi_pulsecount
 
 dnl for libpigpio
@@ -46,7 +46,7 @@ if test "x$enable_raspi_pulsecount" != "xno"; then
 dnl  need_libwiringpi="yes"
   need_libpigpio="yes"
 fi
-if test "x$enable_banana_dht22" != "xno"; then
+if test "x$enable_dht22" != "xno"; then
   need_libwiringpi="yes"
 fi
 if test "x$enable_bme280" != "xno"; then

@@ -54,14 +54,14 @@ It should be run as a cronjob, either as user (`crontab -e`) or globally (`/etc/
 
 * Prerequisites: libconfig9, libconfig-dev
 
-banana_dht22_emoncms
+dht22_emoncms
 ========
-This tool interfaces to a DHT22 temperature/humidity sensor connected to GPIO2. The sensor also needs a 3.3V supply from the GPIO header.
+This tool interfaces to a DHT22 temperature/humidity sensor connected to the GPIO listed in the config file. The sensor also needs a 3.3V supply from the GPIO header.
 This is a command line tool. 
 It should be run as a cronjob from `/etc/crontab` or `/etc/cron.hourly/`.
 
 * **BananaPi**: works
-* **Raspi**: not yet tried
+* **Raspi**: works
 
 * Prerequisites: libconfig9, libconfig-dev, [wiringPi] (http://wiringpi.com/)
 

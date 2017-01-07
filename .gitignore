@@ -16,7 +16,7 @@ missing
 *.deps
 
 emoncms.conf
-banana_dht22/banana_dht22_emoncms
+dht22/dht22_emoncms
 huawei/huawei_emoncms
 raspi_internal/raspi_internal_emoncms
 raspi_pulsecount/raspi_pulsecount_emoncms

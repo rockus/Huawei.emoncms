@@ -1,5 +1,5 @@
-#ifndef BANANA_DHT22_EMONCMS_H
-#define BANANA_DHT22_EMONCMS_H
+#ifndef DHT22_EMONCMS_H
+#define DHT22_EMONCMS_H
 
 //#include <ctype.h>	// for isprint
 #include <stdio.h>		// for sprintf, printf, fprintf
@@ -23,7 +23,7 @@
 
 #define COPYRIGHT "(c)2017 Oliver Gerler (rockus@rockus.at)"
 #define TOOLNAME "DHT22EmonCMS"
-#define BANANA_DHT22_VERSION "v1.02"
+#define DHT22_VERSION "v2.0"
 
 #define MAXTIMINGS 85
 

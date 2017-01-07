@@ -7,6 +7,6 @@
 
 AM_LDFLAGS = -lconfig -L /usr/local/lib -lwiringPi
 
-sbin_PROGRAMS = banana_dht22_emoncms
+sbin_PROGRAMS = dht22_emoncms
 
-banana_dht22_emoncms_SOURCES = banana_dht22_emoncms.c gatherAndSend.c
+dht22_emoncms_SOURCES = dht22_emoncms.c gatherAndSend.c
