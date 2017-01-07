@@ -22,9 +22,9 @@
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
 
-#define COPYRIGHT "(c)2016 Oliver Gerler (rockus@rockus.at)"
+#define COPYRIGHT "(c)2017 Oliver Gerler (rockus@rockus.at)"
 #define TOOLNAME "BME280EmonCMS"
-#define BME280_VERSION "v1.01"
+#define BME280_VERSION "v1.02"
 
 struct data
 {

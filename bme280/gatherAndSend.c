@@ -4,31 +4,20 @@
 
 // https://github.com/nahidalam/raspberryPi/blob/master/i2ctest.c
 
-// return file descriptor of first BME280 found
-// return 0 on error
-int find_bme280(void)
+// return file descriptor if BME280 found at addr, else return 0
+int find_bme280(unsigned char addr)
 {
-  int fd, byte;
+    int fd, byte;
 
-  fd = wiringPiI2CSetup (0x76);
-  byte = wiringPiI2CReadReg8(fd,0xd0);
-  if (byte == 0x60)
-  {
-    printf ("BME280 ID found at 0x76.\n");
-  }
-  else
-  {
-    fd = wiringPiI2CSetup (0x77);
-    byte = wiringPiI2CReadReg8(fd,0xd0);
+    fd = wiringPiI2CSetup (addr);
+    byte = wiringPiI2CReadReg8(fd, 0xd0);
     if (byte == 0x60)
-        printf ("BME280 ID found at 0x77.\n");
-    else
     {
-        printf ("No BME280 ID found.\n");
-        return 0;
+        printf ("BME280 found at addr 0x%02x.\n", addr);
+        return fd;
     }
-  }
-  return fd;
+    printf ("No BME280 found at addr 0x%02x.\n", addr);
+    return 0;
 }
 
 void do_single_measurement(int fd)
@@ -414,7 +403,9 @@ int gatherData(struct config *config, struct data *data)
 
     // check for device present on both addresses (0x76 and 0x77),
     // use first found
-    fd = find_bme280();
+    fd = find_bme280(0x76);
+    if (!(fd))
+        fd = find_bme280(0x77);
     if (fd)
     {
         // config and execute one-shot measurement
