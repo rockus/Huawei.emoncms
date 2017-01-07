@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 		config_destroy(&cfg);
 		return(EXIT_FAILURE);
     }
-    // node, host, apikey, wlaninterface
+    // node, host, apikey
     if (!(config_lookup_string(&cfg, "node", &(config.pNodeName))))
     {
 		fprintf(stderr, "No 'node' setting in configuration file.\n");
@@ -86,12 +86,6 @@ int main(int argc, char **argv)
     if (!(config_lookup_string(&cfg, "apikey", &(config.pApiKey))))
     {
 		fprintf(stderr, "No 'apikey' setting in configuration file.\n");
-		config_destroy(&cfg);
-		return(EXIT_FAILURE);
-    }
-    if (!(config_lookup_string(&cfg, "wlanInterface", &(config.pWlanInterface))))
-    {
-		fprintf(stderr, "No 'wlanInterface' setting in configuration file.\n");
 		config_destroy(&cfg);
 		return(EXIT_FAILURE);
     }

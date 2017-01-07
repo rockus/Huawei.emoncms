@@ -21,9 +21,9 @@
 
 #include <wiringPi.h>	// for DHT22 communications
 
-#define COPYRIGHT "(c)2015 Oliver Gerler (rockus@rockus.at)"
+#define COPYRIGHT "(c)2017 Oliver Gerler (rockus@rockus.at)"
 #define TOOLNAME "DHT22EmonCMS"
-#define BANANA_DHT22_VERSION "v1.00"
+#define BANANA_DHT22_VERSION "v1.01"
 
 #define MAXTIMINGS 85
 
