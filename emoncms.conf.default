@@ -19,3 +19,6 @@ wlanInterface = "wlan1";
 
 # I2C bus device (for BME280)
 i2cbus = "/dev/i2c-2";
+
+# DHT pin (wiringPi numbering)
+dht_pin = 3;
