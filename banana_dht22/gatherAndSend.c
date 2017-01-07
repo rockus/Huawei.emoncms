@@ -85,30 +85,39 @@ static int read_dht22_dat(struct data *data)
 	if (t < -100.0)
 	{
 		syslog(LOG_INFO, "error: temp < -100.0.");
+		printf ("error: temp < -100.0.\n");
 		return 0;
 	}
 
     return 1;
   }
-  else
-  {
-    printf("Data not good, skip\n");
-    return 0;
-  }
+  return 0;
 }
 
 int gatherData(struct config *config, struct data *data)
-// return 0 on error
+// return 0 on setup error or if 10 retries failed
 {
-	if (wiringPiSetup () == -1)
-		return (0);
+  #define MAXTRIES 10
 
-	while (read_dht22_dat(data) == 0)
-		delay(1000);		// wait 1s until retry
+  int i;
 
-	printf ("h: %5.2f%%\nt: %5.2fC\n", data->Humidity, data->Temperature);
+  if (wiringPiSetup () == -1)
+    return (0);
 
-	return 1;
+  for (i=0; i<MAXTRIES; i++)
+  {
+    if (read_dht22_dat(data))
+    {
+      printf ("h: %5.2f%%\nt: %5.2fC\n", data->Humidity, data->Temperature);
+      return 1;
+    }
+    else
+    {
+      printf ("Data not good, skip (%d/%d).\n", i+1, MAXTRIES);
+      delay (1000);	// wait 1s until retry
+    }
+  }
+  return 0;
 }
 
 // send data to emonCMS
