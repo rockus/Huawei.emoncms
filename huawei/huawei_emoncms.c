@@ -32,8 +32,8 @@ int main(int argc, char **argv)
 
     if (argc==1)
     {
-	printHelp();
-	return 1;
+		printHelp();
+		return 1;
     }
 
     opterr = 0;
@@ -132,8 +132,6 @@ printf ("host: %s %s\n", he_cms->h_name, inet_ntoa(ipv4addr));
 ipv4addr.s_addr = *(u_long *)he_modem->h_addr_list[0];
 printf ("modem: %s %s\n", he_modem->h_name, inet_ntoa(ipv4addr));
 
-  keepRunning = 0;
-  do {
     if ((socket_fd_cms = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
     {
         fprintf(stderr, "Could not allocate socket, err %d.\n", errno);
@@ -179,9 +177,6 @@ printf ("modem: %s %s\n", he_modem->h_name, inet_ntoa(ipv4addr));
 
     close(socket_fd_modem);
     close(socket_fd_cms);
-
-//    sleep (5);
-  } while (keepRunning);
 
     printf ("Closing down.\n");
     config_destroy(&cfg);
