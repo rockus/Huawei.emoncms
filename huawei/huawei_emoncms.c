@@ -208,17 +208,18 @@ int sendToEmonCMS (struct config *config, struct data *data, int socket_fd)
 // read data from Huawei GSM/UMTS modem
 int readModemData(struct config *config, struct data *data, int socket_fd)
 {
-    char request[255];
+    char request[1024];
     char response[1024];
     sprintf (request, "GET /api/device/signal/ HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, HUAWEI_VERSION);
     if (send(socket_fd, request, strlen(request), 0) < strlen(request))
     {
 	printf ("send error.\n");
     }
-    if (recv(socket_fd, response, sizeof(response), 0) == 0)
+    if (recv(socket_fd, &response[0], sizeof(response)-1, 0) < 1)
     {
 	printf ("receive error.\n");
     }
+//printf("-----\n%s\n-----\n", response);
     data->sc = strtol(strstr(response, "<sc>")+4, NULL, 0);
     data->rssi = strtol(strstr(response, "<rssi>")+6, NULL, 0);
     data->rscp = strtol(strstr(response, "<rscp>")+6, NULL, 0);
@@ -234,18 +235,22 @@ printf ("ecio: %d\n", data->ecio);
 printf ("tmp:%d 0x%06x lac:%d 0x%02x cid:%d 0x%04x\n", tmp, tmp, data->lac, data->lac, data->cid, data->cid);
 
     sprintf (request, "GET /api/net/current-plmn/ HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, HUAWEI_VERSION);
-    if (send(socket_fd, request, strlen(request), 0) < strlen(request))
+
+    if (send(socket_fd, &request[0], strlen(request), 0) < strlen(request))
     {
 	printf ("send error.\n");
     }
-    if (recv(socket_fd, response, sizeof(response), 0) == 0)
+	sleep (2);
+    int rNum;	// number of received bytes
+	rNum = recv(socket_fd, &response[0], sizeof(response)-1, 0);
+	if (rNum < 0)
     {
-	printf ("receive error.\n");
+		printf ("receive error. errno: %d %s\n", errno, strerror(errno));
     }
 
     data->mcc = strtol(strstr(response, "<Numeric>")+9, NULL, 0)/100;				// first 3 digits
     data->mnc = strtol(strstr(response, "<Numeric>")+9, NULL, 0)-100*data->mcc;		// last 2 digits
-//    printf ("%d %d\n", data->mcc, data->mnc);
+    printf ("mcc: %d mnc: %d\n", data->mcc, data->mnc);
 
     sprintf (request, "GET /api/monitoring/traffic-statistics HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pModemIP, TOOLNAME, HUAWEI_VERSION);
     if (send(socket_fd, request, strlen(request), 0) < strlen(request))
@@ -253,7 +258,6 @@ printf ("tmp:%d 0x%06x lac:%d 0x%02x cid:%d 0x%04x\n", tmp, tmp, data->lac, data
 	printf ("send error.\n");
     }
     sleep (2);	// to wait until all data available
-    int rNum;	// number of received bytes
     rNum = recv(socket_fd, response, sizeof(response)-1, 0);
 //    printf("rNum: %d\n", rNum);
     if (rNum == 0)
