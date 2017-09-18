@@ -111,11 +111,6 @@ printf ("i2c bus: %s\n", config.pi2cBus);
         exit(1);
     }
 
-// check existence of i2c bus
-	wiringPiSetup();
-	wiringPiI2CSetupInterface (config.pi2cBus, 0);
-		// this stops execution on error. BAD!
-
   keepRunning = 0;
   do {
 	if (!(gatherData(&config, &data)))

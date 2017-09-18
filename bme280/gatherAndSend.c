@@ -5,11 +5,13 @@
 // https://github.com/nahidalam/raspberryPi/blob/master/i2ctest.c
 
 // return file descriptor if BME280 found at addr, else return 0
-int find_bme280(unsigned char addr)
+int find_bme280(struct config *config, unsigned char addr)
 {
     int fd, byte;
 
-    fd = wiringPiI2CSetup (addr);
+    wiringPiSetup();
+    fd = wiringPiI2CSetupInterface (config->pi2cBus, addr);
+                // this stops execution on error. BAD!
     byte = wiringPiI2CReadReg8(fd, 0xd0);
     if (byte == 0x60)
     {
@@ -403,9 +405,9 @@ int gatherData(struct config *config, struct data *data)
 
     // check for device present on both addresses (0x76 and 0x77),
     // use first found
-    fd = find_bme280(0x76);
+    fd = find_bme280(config, 0x76);
     if (!(fd))
-        fd = find_bme280(0x77);
+        fd = find_bme280(config, 0x77);
     if (fd)
     {
         // config and execute one-shot measurement
@@ -422,6 +424,7 @@ int gatherData(struct config *config, struct data *data)
 
 	printf ("H: %5.2f%%\nT: %5.2f°C\nP: %5.2fPa\nPred: %5.2fPa\n", data->Humidity, data->Temperature, data->Pressure, data->PressureReduced);
 
+	close (fd);
 	return 1;
     }
     else
