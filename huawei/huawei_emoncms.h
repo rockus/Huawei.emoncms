@@ -16,7 +16,7 @@
 #include <arpa/inet.h>	// for sockaddr_in
 #include <netdb.h>	// for gethostbyname
 
-#define HUAWEI_VERSION "v1.04"
+#define HUAWEI_VERSION "v1.05"
 #define TOOLNAME "Huawei emonCMS"
 #define COPYRIGHT "(c)2015-2017 Oliver Gerler (rockus@rockus.at)"
 
