@@ -38,3 +38,5 @@ struct data
 	long monthUp;		// total upload
 	long dataLimit;		// data limit per month (as configured in web interface of GSM stick)
 };
+
+int recvHttp(int fd, char *response);
