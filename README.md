@@ -1,6 +1,7 @@
 initial creation
 ----------------
-aclocal && automake --add-missing && autoconf && ./configure && make
+`apt install automake libconfig-dev`
+`aclocal && automake --add-missing && autoconf && ./configure && make`
 
 huawei_emoncms
 ========
