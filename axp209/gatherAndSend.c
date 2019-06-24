@@ -16,7 +16,7 @@ static int find_axp209(void)
 
 //  wiringPiI2CSetupInterface ("/dev/i2c-0", 0x34);
         // this stops execution on error. BAD!
- if ((fd = open ("/dev/i2c-0", O_RDWR)) < 0)    // bus: /dev/i2c-0
+ if ((fd = open ("/dev/i2c-1", O_RDWR)) < 0)    // bus: /dev/i2c-1
     printf ("device open failed\n");
  if (ioctl (fd, I2C_SLAVE_FORCE, 0x34) < 0)         // address: 0x34
     printf ("slave select failed\n");
