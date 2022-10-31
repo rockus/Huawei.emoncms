@@ -432,20 +432,3 @@ int gatherData(struct config *config, struct data *data)
         return 0;
     }
 }
-
-// send data to emonCMS
-int sendToEmonCMS (struct config *config, struct data *data, int socket_fd)
-{
-    char tcp_buffer[1024];
-    int num;
-
-//    printf ("socket_fd: %d\n", socket_fd);
-
-    // generate json string for emonCMS
-    sprintf (tcp_buffer, "GET /input/post.json?node=\"%s-env\"&json={Humidity-BME280:%4.2f,Temperature-BME280:%4.2f,Pressure-BME280:%4.2f,PressureReduced-BME280:%4.2f}&apikey=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s %s\r\nConnection: keep-alive\r\n\r\n", config->pNodeName, data->Humidity, data->Temperature, data->Pressure, data->PressureReduced, config->pApiKey, config->pHostName, TOOLNAME, BME280_VERSION);
-
-    printf ("-----\nbuflen: %ld\n%s\n", strlen(tcp_buffer), tcp_buffer);
-    printf ("sent: %ld\n", send(socket_fd, tcp_buffer, strlen(tcp_buffer), 0));
-
-    return 1;   // 0 - fail; 1 - success
-}

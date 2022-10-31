@@ -9,4 +9,4 @@ AM_LDFLAGS = -lconfig -L /usr/local/lib -lwiringPi -lm
 
 sbin_PROGRAMS = bme280_emoncms
 
-bme280_emoncms_SOURCES = bme280_emoncms.c gatherAndSend.c
+bme280_emoncms_SOURCES = bme280_emoncms.c gatherData.c
