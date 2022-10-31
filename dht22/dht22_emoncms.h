@@ -2,6 +2,7 @@
 #define DHT22_EMONCMS_H
 
 #include <ctype.h>	// for isprint
+#include <libconfig.h>		// for config_t
 #include <stdio.h>		// for sprintf, printf, fprintf
 #include <string.h>		// for strerror, strlen, index, strncmp, strncpy, strcmp, strcpy
 #include <stdlib.h>		// for strol, strtod, exit, abort

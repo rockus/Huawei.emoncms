@@ -1,3 +1,5 @@
+#include <syslog.h>
+
 #include "dht22_emoncms.h"
 #include "../emoncms.h"
 

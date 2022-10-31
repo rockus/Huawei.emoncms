@@ -1,22 +1,7 @@
 #ifndef EMONCMS_H
 #define EMONCMS_H
 
-#include <libconfig.h>
-#include <syslog.h>
-
-// configuration items
-struct config
-{
-	// config common to all modules
-	const char *pNodeName;
-	const char *pHostName;
-	const char *pApiKey;
-	// config options particular to single modules
-	const char *pModemIP;
-	const char *pWlanInterface;
-	const char *pi2cBus;
-	int pDHTpin;
-};
+#include "config.h"
 
 // common function declarations
 extern int sendToEmonCMS (struct config *config, struct data *data, int socket_fd);

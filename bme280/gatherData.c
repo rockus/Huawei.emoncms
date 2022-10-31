@@ -1,6 +1,16 @@
-#include "bme280_emoncms.h"
-#include "../emoncms.h"
+#include "bme280.h"
+#include "../config.h"
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>		// for strol, strtod, exit, abort
+#include <syslog.h>
+#include <unistd.h>		// for close, read, getopt, opterr
+
 #include <math.h>
+
+#include <wiringPi.h>
+#include <wiringPiI2C.h>
 
 // https://github.com/nahidalam/raspberryPi/blob/master/i2ctest.c
 
