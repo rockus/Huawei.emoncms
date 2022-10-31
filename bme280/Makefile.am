@@ -5,8 +5,9 @@
 
 #######
 
-AM_LDFLAGS = -lconfig -L /usr/local/lib -lwiringPi -lm
+AM_LDFLAGS = -lconfig -L /usr/local/lib -lwiringPi -lm -lmosquitto
 
-sbin_PROGRAMS = bme280_emoncms
+sbin_PROGRAMS = bme280_emoncms bme280_mqtt
 
 bme280_emoncms_SOURCES = bme280_emoncms.c gatherData.c
+bme280_mqtt_SOURCES = bme280_mqtt.c gatherData.c

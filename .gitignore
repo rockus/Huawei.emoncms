@@ -22,4 +22,5 @@ raspi_internal/raspi_internal_emoncms
 raspi_pulsecount/raspi_pulsecount_emoncms
 wlan/wlan_emoncms
 bme280/bme280_emoncms
+bme280/bme280_mqtt
 axp209/axp209_emoncms
