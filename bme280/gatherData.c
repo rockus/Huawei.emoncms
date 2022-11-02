@@ -14,12 +14,16 @@
 
 // https://github.com/nahidalam/raspberryPi/blob/master/i2ctest.c
 
+int initGatherData()
+{
+  return wiringPiSetup();
+}
+
 // return file descriptor if BME280 found at addr, else return 0
 int find_bme280(struct config *config, unsigned char addr)
 {
     int fd, byte;
 
-    wiringPiSetup();
     fd = wiringPiI2CSetupInterface (config->pi2cBus, addr);
                 // this stops execution on error. BAD!
     byte = wiringPiI2CReadReg8(fd, 0xd0);

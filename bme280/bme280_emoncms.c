@@ -111,6 +111,8 @@ printf ("i2c bus: %s\n", config.pi2cBus);
         exit(1);
     }
 
+  initGatherData();
+
   keepRunning = 0;
   do {
 	if (!(gatherData(&config, &data)))

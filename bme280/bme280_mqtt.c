@@ -14,6 +14,7 @@
 #include "bme280.h"
 #include "bme280_mqtt.h"
 
+extern int initGatherData();
 extern int gatherData (struct config *config, struct data *data);
 
 int publishToMqtt (struct config *config, struct data *data);
@@ -119,6 +120,8 @@ printf ("i2c bus: %s\n", config.pi2cBus);
     return EXIT_FAILURE;
   }
 
+  initGatherData();
+
   while (keepRunning)
   {
     if (!(gatherData(&config, &data)))
@@ -161,7 +164,7 @@ int publishToMqtt (struct config *config, struct data *data)
     return 0;
   }
 
-  snprintf (payload, sizeof payload, "{\"temperature\": %0.1f, \"humidity\": %0.1f, \"pressure\": %0.1f, \"pressure_reduced\": %0.1f}", data->Temperature, data->Humidity, data->Pressure/100.0, data->PressureReduced/100.0);
+  snprintf (payload, sizeof payload, "{\"temperature\": %0.2f, \"humidity\": %0.2f, \"pressure\": %0.2f, \"pressure_reduced\": %0.2f}", data->Temperature, data->Humidity, data->Pressure/100.0, data->PressureReduced/100.0);
   printf ("topic '%s' payload '%s'\n", "Werkstatt/environment", payload);
   mosquitto_publish(mosq, NULL, "Werkstatt/environment", strlen(payload), payload, 0, false);
 
