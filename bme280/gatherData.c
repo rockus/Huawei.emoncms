@@ -357,6 +357,7 @@ int compensate_data(int fd, struct data *data)
     P = 0.0;
   }
 
+/*
 // http://cactus.io/hookups/sensors/barometric/bme280/hookup-arduino-to-bme280-barometric-pressure-sensor
 // http://static.cactus.io/downloads/library/bme280/cactus_io_BME280_I2C.zip
   int64_t lvar1, lvar2, lP;
@@ -373,10 +374,9 @@ int compensate_data(int fd, struct data *data)
   lvar2 = (((int64_t)dig_P8) * lP) >>19;
   lP = ((lP + lvar1 + lvar2) >> 8) + (((int64_t)dig_P7)<<4);
   printf ("lP: %f\n", lP/256.0);
+*/
 
-
-  printf("Humidity:%.2f%% Temperature:%.2f°C Pressure:%.2fhPa\n", H, T, P/100.0 );
-  syslog(LOG_INFO, "Humidity:%.2f%% Temperature:%.2f°C Pressure:%.2fhPa\n", H, T, P/100.0 );
+//  printf("Humidity:%.2f%% Temperature:%.2f°C Pressure:%.2fhPa\n", H, T, P/100.0 );
 
   data->Humidity = H;
   data->Temperature = T;
@@ -436,7 +436,8 @@ int gatherData(struct config *config, struct data *data)
 	// calculate reduced barometric pressure
 	calc_reduced_press(data);
 
-	printf ("H: %5.2f%%\nT: %5.2f°C\nP: %5.2fPa\nPred: %5.2fPa\n", data->Humidity, data->Temperature, data->Pressure, data->PressureReduced);
+	printf ("H: %5.2f%%\tT: %5.2f°C\tP: %5.2fPa\tPred: %5.2fPa\n", data->Humidity, data->Temperature, data->Pressure, data->PressureReduced);
+        syslog(LOG_INFO, "Humidity:%.2f%% Temperature:%.2f°C Pressure:%.2fhPa Pressure_reduced:%.2fhPa", data->Humidity, data->Temperature, data->Pressure / 100.0, data->PressureReduced / 100.0);
 
 	close (fd);
 	return 1;
